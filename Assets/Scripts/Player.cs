@@ -153,8 +153,8 @@ public class Player : MonoBehaviour
     }
 
     void ToRightDash(string triggerName)
-    {  
-
+    {
+        animator.SetTrigger(triggerName);
         Vector2 targetPosition = (Vector2)transform.position + new Vector2(rushMoveDistance, 0);
         //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
