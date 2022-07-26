@@ -13,10 +13,10 @@ public class Player : MonoBehaviour
     [SerializeField] float attackMoveDistance;
     [SerializeField] float attackDuration;
 
-    [Header("Rash")]
+    [Header("Rush")]
     [SerializeField] float rushMoveDistance;
     [SerializeField] float rushDuration;
-    [SerializeField] LayerMask colliderLayer;
+    //[SerializeField] LayerMask colliderLayer;
     Coroutine attackMoveCoroutine = null;
 
     CanCacheInputType currentCache = CanCacheInputType.None;
@@ -148,15 +148,15 @@ public class Player : MonoBehaviour
         animator.SetTrigger(triggerName);
       
         Vector2 targetPosition = (Vector2)transform.position + new Vector2(-rushMoveDistance, 0);
-        targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
+        //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
     }
 
     void ToRightDash(string triggerName)
-    {  
-
+    {
+        animator.SetTrigger(triggerName);
         Vector2 targetPosition = (Vector2)transform.position + new Vector2(rushMoveDistance, 0);
-        targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
+        //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
     }
 
@@ -173,28 +173,28 @@ public class Player : MonoBehaviour
         }
     }
 
-    Vector2 GetActureTargetposition(Vector2 startPosition, Vector2 targetPosition)
-    {
-        Vector2 direction = targetPosition - startPosition;
-        RaycastHit2D? hit = Physics2D.Raycast(transform.position, direction, rushMoveDistance, colliderLayer);
-        float distance = Vector2.Distance(targetPosition, startPosition);
+//    Vector2 GetActureTargetposition(Vector2 startPosition, Vector2 targetPosition)
+//    {
+//        Vector2 direction = targetPosition - startPosition;
+//        RaycastHit2D? hit = Physics2D.Raycast(transform.position, direction, rushMoveDistance, colliderLayer);
+//        float distance = Vector2.Distance(targetPosition, startPosition);
 
 
-        if (hit != null)
-            {
-                distance = Vector2.Distance(hit.Value.transform.position, startPosition);
-            }
-        if(distance < rushMoveDistance)
-        {
-            return startPosition + new Vector2(distance, 0);
-        }
-        else
-        {
-            return targetPosition;
-        }
+//        if (hit != null)
+//            {
+//                distance = Vector2.Distance(hit.Value.transform.position, startPosition);
+//            }
+//       if(distance < rushMoveDistance)
+//       {
+//            return startPosition + new Vector2(distance, 0);
+//        }
+//        else
+//       {
+//           return targetPosition;
+//       }
 
 
-    }
+//    }
     public void AttackAniEnd()
     {
         animator.SetBool("toAttackNormal", false);
