@@ -49,4 +49,6 @@ Thumbs.db
 /[Mm]emoryCaptures/
 /UserSettings/
 /.idea/
+.vs/
+.vsconfig
 
