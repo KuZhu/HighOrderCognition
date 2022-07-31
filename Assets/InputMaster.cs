@@ -29,12 +29,12 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Dash"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""26ff4e62-65bc-4871-a422-d520817f5e13"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Double"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Attack"",
@@ -60,7 +60,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""name"": ""Horizontal"",
                     ""id"": ""6f5464a5-cd9a-47a2-b23e-a32173f8f58d"",
                     ""path"": ""1DAxis"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Dash"",
@@ -93,7 +93,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""1fe71bbf-47d7-4a19-85c0-bfb5287693f1"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Attack"",
@@ -104,7 +104,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""fa25b065-0da9-4596-8df1-126a0c42840e"",
                     ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold"",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Block"",

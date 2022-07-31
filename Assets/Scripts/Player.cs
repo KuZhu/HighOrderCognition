@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public enum CanCacheInputType { A, D, MouseRight, None };
@@ -28,106 +29,104 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+
+        // Handles Attack
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+            if (HocInputManager.Instance.isHold("Attack"))
             {
-                animator.SetBool("toAttackNormal", true);
-
-                Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
-                attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            animator.SetBool("toAttackNormal", false);
-
-            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("AttackNormal_ANI"))
-            {
-                if (attackMoveCoroutine != null)
+                Debug.Log("Tatakai!");
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
                 {
-                    StopCoroutine(attackMoveCoroutine);
+                    animator.SetBool("toAttackNormal", true);
+
+                    Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
+                    attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+                }
+            }
+
+            if (!HocInputManager.Instance.isHold("Attack"))
+            {
+                animator.SetBool("toAttackNormal", false);
+
+                if (!animator.GetCurrentAnimatorStateInfo(0).IsName("AttackNormal_ANI"))
+                {
+                    if (attackMoveCoroutine != null)
+                    {
+                        StopCoroutine(attackMoveCoroutine);
+                    }
                 }
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
+        // Handles Rush / Dash
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+            if (HocInputManager.Instance.getValue<float>("Dash") < 0.0f &&
+                animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
                 ToLeftDash("toRushLeft");
             }
-        }
-        
-        if (Input.GetMouseButtonDown(1))
-        { 
-            ToDefend("toBlock"); 
-        }
-
-        if (Input.GetMouseButtonUp(1))
-            {
-                animator.SetBool("toBlock", false);
-            }
-
-
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+            else if (HocInputManager.Instance.getValue<float>("Dash") > 0.0f &&
+                     animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
                 ToRightDash("toRushRight");
             }
         }
 
-        if (startCache)
-        {
-            if (!firstInCache)
-            {
-                firstInCache = true;
-                Debug.Log("start cache");
-            }
-            if(Input.GetKeyDown(KeyCode.A))
-            {
-                currentCache = CanCacheInputType.A;
-            }
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                currentCache = CanCacheInputType.D;
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                currentCache = CanCacheInputType.MouseRight;
-            }
-        }
+        // Handles Block
+        if (HocInputManager.Instance.isHold("Block")) ToDefend("toBlock"); 
+        else animator.SetBool("toBlock", false);
 
-        if (startDealAnimationEarlyEnd)
-        {
-            if (!firstDeal)
-            {
-                firstDeal = true;
-                Debug.Log("Deal early animation end");
-            }
 
-            switch (currentCache)
-            {
-                case CanCacheInputType.D:
-                    ToRightDash("forceRightDash");
-                    startDealAnimationEarlyEnd = false;
-                    break;
-                case CanCacheInputType.MouseRight:
-                    ToDefend("forceBlock");
-                    startDealAnimationEarlyEnd = false;
-                    break;
-                case CanCacheInputType.A:
-                    ToLeftDash("forceLeftDash");
-                    startDealAnimationEarlyEnd = false;
-                    break;
-                case CanCacheInputType.None:
-                    break;
-            }
 
-            currentCache = CanCacheInputType.None;
-        }
+        // if (startCache)
+        // {
+        //     if (!firstInCache)
+        //     {
+        //         firstInCache = true;
+        //         Debug.Log("start cache");
+        //     }
+        //     if(Input.GetKeyDown(KeyCode.A))
+        //     {
+        //         currentCache = CanCacheInputType.A;
+        //     }
+        //     if (Input.GetKeyDown(KeyCode.D))
+        //     {
+        //         currentCache = CanCacheInputType.D;
+        //     }
+        //     if (Input.GetMouseButtonDown(1))
+        //     {
+        //         currentCache = CanCacheInputType.MouseRight;
+        //     }
+        // }
+
+        // if (startDealAnimationEarlyEnd)
+        // {
+        //     if (!firstDeal)
+        //     {
+        //         firstDeal = true;
+        //         Debug.Log("Deal early animation end");
+        //     }
+
+        //     switch (currentCache)
+        //     {
+        //         case CanCacheInputType.D:
+        //             ToRightDash("forceRightDash");
+        //             startDealAnimationEarlyEnd = false;
+        //             break;
+        //         case CanCacheInputType.MouseRight:
+        //             ToDefend("forceBlock");
+        //             startDealAnimationEarlyEnd = false;
+        //             break;
+        //         case CanCacheInputType.A:
+        //             ToLeftDash("forceLeftDash");
+        //             startDealAnimationEarlyEnd = false;
+        //             break;
+        //         case CanCacheInputType.None:
+        //             break;
+        //     }
+
+        //     currentCache = CanCacheInputType.None;
+        // }
     }
     void ToDefend(string transitionName)
     {

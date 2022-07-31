@@ -366,6 +366,7 @@ public class HocFsmManager : MonoBehaviour, IHocFsmManager
     }
     public void update(float elapsedTime)
     {
+        
 #if DEBUG
         _fsmDisplay.Clear();
 #endif

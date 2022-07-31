@@ -15,7 +15,15 @@ public class HocInputManager : MonoBehaviour
     // Input Data
     private InputMaster _master;
     private Dictionary<string, InputAction> _actions;
+    private Dictionary<string, bool> _isPressed;
     private List<InputAction> _playerControlActions;
+    
+    // Data Used to Implement Cached Input
+    private InputAction _cachedInput;
+    private bool _hasCachedInput = false;
+    private float _cachedValue = 0.0f;
+    private bool _enableCachedInput = false;
+    private string _prevInputName = "";
 #if DEBUG && ENABLE_INPUTSYSTEM_DEBUG
     [HocInternal.ReadOnly]
     public List<InputAction> inputActions; 
@@ -26,6 +34,7 @@ public class HocInputManager : MonoBehaviour
 
         _master = new InputMaster();
         _actions = new Dictionary<string, InputAction>();
+        _isPressed = new Dictionary<string, bool>();
 #if DEBUG && ENABLE_INPUTSYSTEM_DEBUG
         inputActions = new List<InputAction>();
 #endif
@@ -42,17 +51,17 @@ public class HocInputManager : MonoBehaviour
     {
         string[] _actionNames =
         {
-            "move",
-            "look",
-            "fire"
+            "Dash",
+            "Attack",
+            "Block"
         };
 
         var p = _master.Player;
         InputAction[] _actionList =
         {
-            p.Move,
-            p.Look,
-            p.Fire
+            p.Dash,
+            p.Attack,
+            p.Block
         };
 #if DEBUG 
         if(HocConfig.Instance != null && HocConfig.Instance.enableInputSystemDebug)
@@ -63,7 +72,7 @@ public class HocInputManager : MonoBehaviour
         {
             InputAction[] _playerControlActionList =
             {
-                p.Move
+                p.Dash
             };
             _playerControlActions = new List<InputAction>();
             _playerControlActions.AddRange(_playerControlActionList);
@@ -73,7 +82,41 @@ public class HocInputManager : MonoBehaviour
         {
             _actions[_actionNames[i]] = _actionList[i];
             _actionList[i].Enable();
+            _isPressed[_actionNames[i]] = false;
         }
+
+#if DEBUG
+        _actions["Attack"].performed +=  delegate(InputAction.CallbackContext context) { Debug.Log("Attack is Pressed!"); };
+        _actions["Dash"].performed += delegate(InputAction.CallbackContext context)
+        {
+            Debug.Log("Dash is Pressed with Value: " + getValue<float>("Dash"));
+        };
+#endif
+        System.Action<InputAction.CallbackContext> cacheInputRegister = delegate(InputAction.CallbackContext context)
+        {
+            if (!_hasCachedInput && _enableCachedInput)
+            {
+                _hasCachedInput = true;
+                _cachedInput = context.action;
+#if DEBUG
+                Debug.Log("Cached Input: " + _cachedInput.name );
+#endif
+                if (_cachedInput.name == "Dash")
+                {
+                    _cachedValue = getValue<float>("Dash");
+#if DEBUG
+                    Debug.Log("Cached Input Value: " + _cachedValue);
+#endif
+                }
+            }
+        };
+        
+        _actions["Attack"].performed += cacheInputRegister;
+        _actions["Dash"].performed += cacheInputRegister;
+        _actions["Block"].performed += cacheInputRegister;
+        
+
+
     }
 
     public void setPlayerControlActive(bool isActive)
@@ -99,10 +142,42 @@ public class HocInputManager : MonoBehaviour
         return _actions[actionName].ReadValue<T>();
     }
 
-    public bool isPressed(string actionName)
+     public void enableCachedInput(string prevInputName)
+     {
+         _enableCachedInput = true;
+         _prevInputName = prevInputName;
+     }
+
+     public void releaseCachedInput()
+     {
+         _enableCachedInput = false;
+         _hasCachedInput = false;
+     }
+
+     public void disableCachedInput()
+     {
+         _enableCachedInput = false;
+         _prevInputName = "";
+     }
+
+     public bool isPressed(string actionName)
+     {
+#if DEBUG
+        if(HocConfig.Instance && HocConfig.Instance.enableInputSystemDebug)
+        {
+            if(!_actions.ContainsKey(actionName))
+            {
+                throw new System.Exception("Cannot get value from action: " + actionName + " since it doesn't exist!");
+            }
+        }
+#endif
+        return _isPressed[actionName];
+         
+     }
+    public bool isHold(string actionName)
     {
 #if DEBUG
-        if(HocConfig.Instance != null && HocConfig.Instance.enableInputSystemDebug)
+        if(HocConfig.Instance && HocConfig.Instance.enableInputSystemDebug)
         {
             if(!_actions.ContainsKey(actionName))
             {
