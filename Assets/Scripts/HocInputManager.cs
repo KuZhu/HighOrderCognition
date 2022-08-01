@@ -21,7 +21,21 @@ public class HocInputManager : MonoBehaviour
     // Data Used to Implement Cached Input
     private InputAction _cachedInput;
     private bool _hasCachedInput = false;
+    public bool hasCachedInput
+    {
+        get { return _hasCachedInput; }
+    }
+
+    public InputAction cachedInput
+    {
+        get { return _cachedInput; }
+    }
     private float _cachedValue = 0.0f;
+
+    public float cachedValue
+    {
+        get { return _cachedValue; }
+    }
     private bool _enableCachedInput = false;
 #if DEBUG && ENABLE_INPUTSYSTEM_DEBUG
     [HocInternal.ReadOnly]
@@ -143,6 +157,7 @@ public class HocInputManager : MonoBehaviour
      {
          _enableCachedInput = true;
      }
+     
 
      public void releaseCachedInput()
      {

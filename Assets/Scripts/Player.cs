@@ -79,27 +79,7 @@ public class Player : MonoBehaviour
         else animator.SetBool("toBlock", false);
 
 
-
-        // if (startCache)
-        // {
-        //     if (!firstInCache)
-        //     {
-        //         firstInCache = true;
-        //         Debug.Log("start cache");
-        //     }
-        //     if(Input.GetKeyDown(KeyCode.A))
-        //     {
-        //         currentCache = CanCacheInputType.A;
-        //     }
-        //     if (Input.GetKeyDown(KeyCode.D))
-        //     {
-        //         currentCache = CanCacheInputType.D;
-        //     }
-        //     if (Input.GetMouseButtonDown(1))
-        //     {
-        //         currentCache = CanCacheInputType.MouseRight;
-        //     }
-        // }
+  
 
         // if (startDealAnimationEarlyEnd)
         // {
@@ -144,10 +124,29 @@ public class Player : MonoBehaviour
 
     void enableCachedInput()
     {
-        HocInputManager.Instance.enableCachedInput();
         HocInputManager.Instance.releaseCachedInput();
+        HocInputManager.Instance.enableCachedInput();
     }
 
+    void processEarlyEndCache()
+    {
+        if (HocInputManager.Instance.hasCachedInput)
+        {
+            string cachedName = HocInputManager.Instance.cachedInput.name;
+            switch (cachedName)
+            {
+                case "Block":
+                    ToDefend("forceBlock");
+                    break;
+                case "Dash":
+                    if(HocInputManager.Instance.cachedValue < 0.0f) ToLeftDash("forceLeftDash");
+                    else ToRightDash("forceRightDash");
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
         
     void ToLeftDash(string triggerName)
     {
