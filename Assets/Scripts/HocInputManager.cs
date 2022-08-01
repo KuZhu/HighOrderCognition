@@ -109,6 +109,7 @@ public class HocInputManager : MonoBehaviour
         {
             if (!_hasCachedInput && _enableCachedInput)
             {
+                if (context.action.name == "Attack") return;
                 _hasCachedInput = true;
                 _cachedInput = context.action;
 #if DEBUG
