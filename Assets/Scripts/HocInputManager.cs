@@ -23,7 +23,6 @@ public class HocInputManager : MonoBehaviour
     private bool _hasCachedInput = false;
     private float _cachedValue = 0.0f;
     private bool _enableCachedInput = false;
-    private string _prevInputName = "";
 #if DEBUG && ENABLE_INPUTSYSTEM_DEBUG
     [HocInternal.ReadOnly]
     public List<InputAction> inputActions; 
@@ -115,8 +114,6 @@ public class HocInputManager : MonoBehaviour
         _actions["Dash"].performed += cacheInputRegister;
         _actions["Block"].performed += cacheInputRegister;
         
-
-
     }
 
     public void setPlayerControlActive(bool isActive)
@@ -142,10 +139,9 @@ public class HocInputManager : MonoBehaviour
         return _actions[actionName].ReadValue<T>();
     }
 
-     public void enableCachedInput(string prevInputName)
+     public void enableCachedInput()
      {
          _enableCachedInput = true;
-         _prevInputName = prevInputName;
      }
 
      public void releaseCachedInput()
@@ -154,11 +150,7 @@ public class HocInputManager : MonoBehaviour
          _hasCachedInput = false;
      }
 
-     public void disableCachedInput()
-     {
-         _enableCachedInput = false;
-         _prevInputName = "";
-     }
+
 
      public bool isPressed(string actionName)
      {

@@ -63,11 +63,13 @@ public class Player : MonoBehaviour
             if (HocInputManager.Instance.getValue<float>("Dash") < 0.0f &&
                 animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
+                rushMoveDistance = -2;
                 ToLeftDash("toRushLeft");
             }
             else if (HocInputManager.Instance.getValue<float>("Dash") > 0.0f &&
                      animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
+                rushMoveDistance = 2;
                 ToRightDash("toRushRight");
             }
         }
@@ -138,8 +140,13 @@ public class Player : MonoBehaviour
             {
                 animator.SetTrigger(transitionName);
             }
-    }    
-  
+    }
+
+    void enableCachedInput()
+    {
+        HocInputManager.Instance.enableCachedInput();
+        HocInputManager.Instance.releaseCachedInput();
+    }
 
         
     void ToLeftDash(string triggerName)
@@ -155,7 +162,8 @@ public class Player : MonoBehaviour
     {
         animator.SetTrigger(triggerName);
         Vector2 targetPosition = (Vector2)transform.position + new Vector2(rushMoveDistance, 0);
-        targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
+        print("Current Position: " + transform.position + "Target Position: " + targetPosition);
+        //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
     }
 
