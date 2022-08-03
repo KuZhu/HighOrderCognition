@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] Animator animator;
 
     [Header("Attack")]
+    [SerializeField] AttackArea attackArea;
     [SerializeField] float attackMoveDistance;
     [SerializeField] float attackDuration;
 
@@ -26,6 +27,8 @@ public class Player : MonoBehaviour
     bool firstInCache = false;
     bool firstDeal = false;
 
+    bool attacking = false;
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -35,6 +38,7 @@ public class Player : MonoBehaviour
                 animator.SetBool("toAttackNormal", true);
 
                 Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
+                targetPosition = GetActureTargetposition(transform.position, targetPosition);
                 attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
             }
         }
@@ -128,7 +132,16 @@ public class Player : MonoBehaviour
 
             currentCache = CanCacheInputType.None;
         }
+
+        if (attacking)
+        {
+            if(attackArea.enemy != null)
+            {
+                Debug.Log("Hit " + attackArea.enemy.name);
+            }
+        }
     }
+
     void ToDefend(string transitionName)
     {
         if (transitionName == "toBlock")
@@ -218,5 +231,15 @@ public class Player : MonoBehaviour
     public void DealEarlyEnd()
     {
         startDealAnimationEarlyEnd = true;
+    }
+
+    public void StartAttack()
+    {
+        attacking = true;
+    }
+
+    public void EndAttack()
+    {
+        attacking = false;
     }
 }
