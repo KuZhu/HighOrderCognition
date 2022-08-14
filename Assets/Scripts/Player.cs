@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] float attackDuration;
 
     [Header("Rush")]
-    [SerializeField] float rushMoveDistance;
+    [SerializeField] float rushMoveDistance = 2;
     [SerializeField] float rushDuration;
     [SerializeField] LayerMask colliderLayer;
     Coroutine attackMoveCoroutine = null;
@@ -63,13 +63,11 @@ public class Player : MonoBehaviour
             if (HocInputManager.Instance.getValue<float>("Dash") < 0.0f &&
                 animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
-                rushMoveDistance = -2;
                 ToLeftDash("toRushLeft");
             }
             else if (HocInputManager.Instance.getValue<float>("Dash") > 0.0f &&
                      animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
-                rushMoveDistance = 2;
                 ToRightDash("toRushRight");
             }
         }
@@ -151,10 +149,11 @@ public class Player : MonoBehaviour
     void ToLeftDash(string triggerName)
     {
         animator.SetTrigger(triggerName);
-      
         Vector2 targetPosition = (Vector2)transform.position + new Vector2(-rushMoveDistance, 0);
-        targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
+        print("Current Position: " + transform.position + "Target Position: " + targetPosition);
+        //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
+        transform.position = targetPosition;
     }
 
     void ToRightDash(string triggerName)
@@ -164,6 +163,7 @@ public class Player : MonoBehaviour
         print("Current Position: " + transform.position + "Target Position: " + targetPosition);
         //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
+        transform.position = targetPosition;
     }
 
 
