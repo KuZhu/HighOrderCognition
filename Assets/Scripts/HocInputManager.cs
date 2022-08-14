@@ -37,6 +37,7 @@ public class HocInputManager : MonoBehaviour
         get { return _cachedValue; }
     }
     private bool _enableCachedInput = false;
+    private string _previousCachedAction = "";
 #if DEBUG && ENABLE_INPUTSYSTEM_DEBUG
     [HocInternal.ReadOnly]
     public List<InputAction> inputActions; 
@@ -156,12 +157,18 @@ public class HocInputManager : MonoBehaviour
 
      public void enableCachedInput()
      {
+#if DEBUG
+         Debug.Log("Enabled Cahed Input");
+#endif 
          _enableCachedInput = true;
      }
      
 
      public void releaseCachedInput()
      {
+#if DEBUG
+         Debug.Log("Disabled Cached Input");
+#endif 
          _enableCachedInput = false;
          _hasCachedInput = false;
      }

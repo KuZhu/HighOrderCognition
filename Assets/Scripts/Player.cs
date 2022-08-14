@@ -26,7 +26,15 @@ public class Player : MonoBehaviour
     bool startDealAnimationEarlyEnd = false;
     bool firstInCache = false;
     bool firstDeal = false;
+    private bool _dashing = false;
+    private Vector2 _targetPosition = Vector2.zero;
+    private Coroutine _dashRoutine;
 
+
+    void Start()
+    {
+        _targetPosition = transform.position;
+    }
     void Update()
     {
 
@@ -34,7 +42,6 @@ public class Player : MonoBehaviour
         {
             if (HocInputManager.Instance.isHold("Attack"))
             {
-                Debug.Log("Tatakai!");
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
                 {
                     animator.SetBool("toAttackNormal", true);
@@ -60,21 +67,28 @@ public class Player : MonoBehaviour
 
         // Handles Rush / Dash
         {
+            Debug.Log("Has Cached Input: " + HocInputManager.Instance.hasCachedInput);
             if (HocInputManager.Instance.getValue<float>("Dash") < 0.0f &&
                 animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
-                ToLeftDash("toRushLeft");
+                dash("toRushLeft", -1); 
+                // ToLeftDash("toRushLeft");
             }
             else if (HocInputManager.Instance.getValue<float>("Dash") > 0.0f &&
                      animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
-                ToRightDash("toRushRight");
+                dash("toRushRight", 1); 
+                //ToRightDash("toRushRight");
             }
         }
 
         // Handles Block
-        if (HocInputManager.Instance.isHold("Block")) ToDefend("toBlock"); 
-        else animator.SetBool("toBlock", false);
+        if (HocInputManager.Instance.isHold("Block")) ToDefend("toBlock");
+        else
+        {
+            animator.SetBool("toBlock", false);
+            HocEventManager.Instance.dispatchHocEvent("exitDefendMode", 0);
+        }
 
 
   
@@ -111,17 +125,19 @@ public class Player : MonoBehaviour
     void ToDefend(string transitionName)
     {
         if (transitionName == "toBlock")
-            {
-                animator.SetBool("toBlock", true);
-            }
+        {
+            animator.SetBool("toBlock", true);
+            HocEventManager.Instance.dispatchHocEvent("enterDefendMode", 0);
+        }
         else
-            {
-                animator.SetTrigger(transitionName);
-            }
+        {
+            animator.SetTrigger(transitionName);
+        }
     }
 
     void enableCachedInput()
     {
+        Debug.Log("Released Cached Input: " + HocInputManager.Instance.hasCachedInput);
         HocInputManager.Instance.releaseCachedInput();
         HocInputManager.Instance.enableCachedInput();
     }
@@ -137,33 +153,40 @@ public class Player : MonoBehaviour
                     ToDefend("forceBlock");
                     break;
                 case "Dash":
-                    if(HocInputManager.Instance.cachedValue < 0.0f) ToLeftDash("forceLeftDash");
-                    else ToRightDash("forceRightDash");
+                    Debug.Log("Early processing Dash with _dashing = " + _dashing);
+                    if(HocInputManager.Instance.cachedValue < 0.0f) dash("toRushLeft", -1); //ToLeftDash("forceLeftDash");
+                    else dash("toRushRight", 1); //ToRightDash("forceRightDash");
                     break;
                 default:
                     break;
             }
         }
     }
+
+    void dash(string triggerName, float direction)
+    {
+        if (_dashRoutine != null) StopCoroutine(_dashRoutine);
+        animator.SetTrigger(triggerName);
+        _targetPosition += direction * new Vector2(rushMoveDistance, 0);
+        _dashRoutine = StartCoroutine(move(transform.position, _targetPosition, rushDuration));
+    }
         
     void ToLeftDash(string triggerName)
     {
+        if (_dashing) return;
         animator.SetTrigger(triggerName);
         Vector2 targetPosition = (Vector2)transform.position + new Vector2(-rushMoveDistance, 0);
-        print("Current Position: " + transform.position + "Target Position: " + targetPosition);
         //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
-        transform.position = targetPosition;
     }
 
     void ToRightDash(string triggerName)
     {
+        if (_dashing) return;
         animator.SetTrigger(triggerName);
         Vector2 targetPosition = (Vector2)transform.position + new Vector2(rushMoveDistance, 0);
-        print("Current Position: " + transform.position + "Target Position: " + targetPosition);
         //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
-        transform.position = targetPosition;
     }
 
 
@@ -173,10 +196,10 @@ public class Player : MonoBehaviour
         while (t <= 1)
         {
             transform.position = Vector2.Lerp(startPosition, targetPosition,t);
-            //Debug.Log(t);
             t += Time.deltaTime / duration;
             yield return new WaitForEndOfFrame();
         }
+        _dashRoutine = null;
     }
 
     Vector2 GetActureTargetposition(Vector2 startPosition, Vector2 targetPosition)
