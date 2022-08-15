@@ -239,7 +239,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd0068c33a2bf896dad1bd5a807f6499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _registeredEventNames: []
+  _registeredEventNames:
+  - enterDefendMode
+  - exitDefendMode
   _storyEventData: []
 --- !u!1 &3717227739548196356
 GameObject:
@@ -285,7 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35495e6f701d4d3f582180c81475b16e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableDebugLog: 0
+  enableDebugLog: 1
   enableEventSystemDebug: 1
   enableFsmManagerDebug: 1
   enableInputSystemDebug: 1
