@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class StartButton : MonoBehaviour
 {
     [SerializeField] GameObject startButtonLook;
+    [SerializeField] GameObject guideButtonLook;
 
     public void StartButtonHover()
     {
@@ -22,5 +23,15 @@ public class StartButton : MonoBehaviour
     public void StarButtonClick()
     {
         SceneManager.LoadScene(1);
+    }
+    public void GuideButtonHover()
+    {
+        guideButtonLook.SetActive(true);
+        guideButtonLook.GetComponent<Animator>().SetTrigger("Highlighted");
+    }
+    public void GuideButtonOut()
+    {
+        guideButtonLook.SetActive(false);
+        guideButtonLook.GetComponent<Animator>().SetTrigger("Normal");
     }
 }
