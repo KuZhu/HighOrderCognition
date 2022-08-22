@@ -5,33 +5,36 @@ using UnityEngine.SceneManagement;
 
 public class StartButton : MonoBehaviour
 {
-    [SerializeField] GameObject startButtonLook;
-    [SerializeField] GameObject guideButtonLook;
-
-    public void StartButtonHover()
+    [SerializeField] GameObject ButtonLook;
+    [SerializeField] GameObject GuideImage;
+    public void ButtonHover()
     {
-        startButtonLook.SetActive(true);
-        startButtonLook.GetComponent<Animator>().SetTrigger("Highlighted");
+        ButtonLook.SetActive(true);
+        ButtonLook.GetComponent<Animator>().SetTrigger("Highlighted");
     }
 
-    public void StartButtonOut()
+    public void ButtonOut()
     {
-        startButtonLook.GetComponent<Animator>().SetTrigger("Normal");
-        startButtonLook.SetActive(false);
+        ButtonLook.GetComponent<Animator>().SetTrigger("Normal");
+        ButtonLook.SetActive(false);
     }
 
     public void StarButtonClick()
     {
         SceneManager.LoadScene(1);
     }
-    public void GuideButtonHover()
+    public void GuideButtonClick()
     {
-        guideButtonLook.SetActive(true);
-        guideButtonLook.GetComponent<Animator>().SetTrigger("Highlighted");
+        GuideImage.SetActive(true);
     }
-    public void GuideButtonOut()
+    public void ExitButtonClick()
     {
-        guideButtonLook.SetActive(false);
-        guideButtonLook.GetComponent<Animator>().SetTrigger("Normal");
+        Application.Quit();
     }
+
+    public void BackButtonClick()
+    {
+        GuideImage.SetActive(false);
+    }
+
 }
