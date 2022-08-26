@@ -10,6 +10,7 @@ public class HocSword : MonoBehaviour
 
     private int _maxPerfectBlockDetectionFrame = 10000;
     private int _defendModeFrameCounter = 0;
+    public HocStatus playerStatus;
     // Start is called before the first frame update
     void Start()
     {
