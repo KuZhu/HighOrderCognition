@@ -35,6 +35,7 @@ public class HocSword : MonoBehaviour
     void Update()
     {
         if (_isDefenseMode && _defendModeFrameCounter < _maxPerfectBlockDetectionFrame) _defendModeFrameCounter++;
+        Debug.Log("Defend Mode Frame: " + _defendModeFrameCounter);
     }
 
     private void OnTriggerEnter(Collider other)
