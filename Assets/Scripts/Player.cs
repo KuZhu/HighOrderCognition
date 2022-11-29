@@ -20,6 +20,9 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask colliderLayer;
     Coroutine attackMoveCoroutine = null;
 
+    [Header("Sword")]
+    [SerializeField] HocSword sword;
+
     CanCacheInputType currentCache = CanCacheInputType.None;
 
     bool startCache = false;
@@ -30,6 +33,7 @@ public class Player : MonoBehaviour
     private Vector2 _targetPosition = Vector2.zero;
     private Coroutine _dashRoutine;
 
+    bool attackValid = false;
 
     void Start()
     {
@@ -37,7 +41,6 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
-
         // Handles Attack
         {
             if (HocInputManager.Instance.isHold("Attack"))
@@ -67,17 +70,17 @@ public class Player : MonoBehaviour
 
         // Handles Rush / Dash
         {
-            Debug.Log("Has Cached Input: " + HocInputManager.Instance.hasCachedInput);
+            //Debug.Log("Has Cached Input: " + HocInputManager.Instance.hasCachedInput);
             if (HocInputManager.Instance.getValue<float>("Dash") < 0.0f &&
                 animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
-                dash("toRushLeft", -1); 
+                dash("toRushLeft", -1);
                 // ToLeftDash("toRushLeft");
             }
             else if (HocInputManager.Instance.getValue<float>("Dash") > 0.0f &&
                      animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
-                dash("toRushRight", 1); 
+                dash("toRushRight", 1);
                 //ToRightDash("toRushRight");
             }
         }
@@ -90,37 +93,41 @@ public class Player : MonoBehaviour
             HocEventManager.Instance.dispatchHocEvent("exitDefendMode", 0);
         }
 
+        {
+            // if (startDealAnimationEarlyEnd)
+            // {
+            //     if (!firstDeal)
+            //     {
+            //         firstDeal = true;
+            //         Debug.Log("Deal early animation end");
+            //     }
 
-  
+            //     switch (currentCache)
+            //     {
+            //         case CanCacheInputType.D:
+            //             ToRightDash("forceRightDash");
+            //             startDealAnimationEarlyEnd = false;
+            //             break;
+            //         case CanCacheInputType.MouseRight:
+            //             ToDefend("forceBlock");
+            //             startDealAnimationEarlyEnd = false;
+            //             break;
+            //         case CanCacheInputType.A:
+            //             ToLeftDash("forceLeftDash");
+            //             startDealAnimationEarlyEnd = false;
+            //             break;
+            //         case CanCacheInputType.None:
+            //             break;
+            //     }
 
-        // if (startDealAnimationEarlyEnd)
-        // {
-        //     if (!firstDeal)
-        //     {
-        //         firstDeal = true;
-        //         Debug.Log("Deal early animation end");
-        //     }
+            //     currentCache = CanCacheInputType.None;
+            // }
+        }
 
-        //     switch (currentCache)
-        //     {
-        //         case CanCacheInputType.D:
-        //             ToRightDash("forceRightDash");
-        //             startDealAnimationEarlyEnd = false;
-        //             break;
-        //         case CanCacheInputType.MouseRight:
-        //             ToDefend("forceBlock");
-        //             startDealAnimationEarlyEnd = false;
-        //             break;
-        //         case CanCacheInputType.A:
-        //             ToLeftDash("forceLeftDash");
-        //             startDealAnimationEarlyEnd = false;
-        //             break;
-        //         case CanCacheInputType.None:
-        //             break;
-        //     }
+        if (attackValid)
+        {
 
-        //     currentCache = CanCacheInputType.None;
-        // }
+        }
     }
     void ToDefend(string transitionName)
     {
@@ -242,5 +249,31 @@ public class Player : MonoBehaviour
     public void DealEarlyEnd()
     {
         startDealAnimationEarlyEnd = true;
+    }
+
+    public void OnAttackNormalHit()
+    {
+        sword.AttackNormal_EnterAttack();
+
+        attackValid = true;
+    }
+
+    public void OnAttackNormalEnd()
+    {
+        sword.AttackNormal_ExitAttack();
+
+        attackValid = false;
+    }
+
+    public void OnEnterBlockPerfect()
+    {
+        Debug.Log("Enter Perfect Block Ani");
+        sword.enterPerfectBlockAni = true;
+    }
+
+    public void OnExitBlockPerfect()
+    {
+        Debug.Log("Exit Perfect Block Ani");
+        sword.enterPerfectBlockAni = false;
     }
 }

@@ -103,7 +103,7 @@ public class HocInputManager : MonoBehaviour
         _actions["Attack"].performed +=  delegate(InputAction.CallbackContext context) { Debug.Log("Attack is Pressed!"); };
         _actions["Dash"].performed += delegate(InputAction.CallbackContext context)
         {
-            Debug.Log("Dash is Pressed with Value: " + getValue<float>("Dash"));
+            //Debug.Log("Dash is Pressed with Value: " + getValue<float>("Dash"));
         };
 #endif
         System.Action<InputAction.CallbackContext> cacheInputRegister = delegate(InputAction.CallbackContext context)
@@ -114,13 +114,13 @@ public class HocInputManager : MonoBehaviour
                 _hasCachedInput = true;
                 _cachedInput = context.action;
 #if DEBUG
-                Debug.Log("Cached Input: " + _cachedInput.name );
+                //Debug.Log("Cached Input: " + _cachedInput.name );
 #endif
                 if (_cachedInput.name == "Dash")
                 {
                     _cachedValue = getValue<float>("Dash");
 #if DEBUG
-                    Debug.Log("Cached Input Value: " + _cachedValue);
+                    //Debug.Log("Cached Input Value: " + _cachedValue);
 #endif
                 }
             }
@@ -158,7 +158,7 @@ public class HocInputManager : MonoBehaviour
      public void enableCachedInput()
      {
 #if DEBUG
-         Debug.Log("Enabled Cahed Input");
+         //Debug.Log("Enabled Cahed Input");
 #endif 
          _enableCachedInput = true;
      }
@@ -167,7 +167,7 @@ public class HocInputManager : MonoBehaviour
      public void releaseCachedInput()
      {
 #if DEBUG
-         Debug.Log("Disabled Cached Input");
+         //Debug.Log("Disabled Cached Input");
 #endif 
          _enableCachedInput = false;
          _hasCachedInput = false;

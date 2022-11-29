@@ -11,13 +11,19 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] AudioSource hitAudio;
 
+    [SerializeField] HocEnemySword sword;
+
     GameObject target = null;
 
     bool isAttacking = false;
 
+    public static System.Action OnEnterCanPerfectBlockAniArea;
+    public static System.Action OnExitCanPerfectBlockAniArea;
+
     private void Update()
     {
         SearchPlayer();
+
         if(target != null)
         {
             Attack();
@@ -26,19 +32,18 @@ public class Enemy : MonoBehaviour
 
     void SearchPlayer()
     {
-        Collider2D collider2D = Physics2D.OverlapCircle(searchPlayerCenterTf.position, searchPlayerRadius);
-
-        if (collider2D != null)
-        {
+        Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(searchPlayerCenterTf.position, searchPlayerRadius);
+        foreach (Collider2D collider2D in collider2Ds)
+        { 
             if (collider2D.CompareTag("Player"))
             {
                 target = collider2D.gameObject;
+
+                return;
             }
         }
-        else
-        {
-            target = null;
-        }
+
+        target = null;
     }
 
     void Attack()
@@ -55,13 +60,27 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(searchPlayerCenterTf.position, searchPlayerRadius);
     }
 
-    public void OnAttackNormalEnd()
-    {
-        isAttacking = false;
-    }
-
     public void OnAttackNormalHit()
     {
         hitAudio.Play();
+
+        sword.AttackNormal_EnterAttack();
+    }
+
+    public void OnAttackNormalEnd()
+    {
+        isAttacking = false;
+
+        sword.AttackNormal_ExitAttack();
+    }
+
+    public void _OnEnterCanPerfectBlockAniArea()
+    {
+        OnEnterCanPerfectBlockAniArea?.Invoke();
+    }
+
+    public void _OnExitCanPerfectBlockAniArea()
+    {
+        OnExitCanPerfectBlockAniArea?.Invoke();
     }
 }

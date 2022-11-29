@@ -252,6 +252,7 @@ MonoBehaviour:
   colliderLayer:
     serializedVersion: 2
     m_Bits: 0
+  sword: {fileID: 1138543472}
 --- !u!61 &354241
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -290,8 +291,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c962e1fbac4a9fba60a2d8af83aa4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  energy: 0
-  posture: 0
+  energy: 3
+  posture: 3
   swordCollider: {fileID: 1138543471}
 --- !u!1 &519420028
 GameObject:
@@ -388,9 +389,10 @@ GameObject:
   - component: {fileID: 1138543470}
   - component: {fileID: 1138543471}
   - component: {fileID: 1138543472}
+  - component: {fileID: 1138543473}
   m_Layer: 0
-  m_Name: PlayerCollider
-  m_TagString: Untagged
+  m_Name: PlayerSword
+  m_TagString: PlayerSword
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -420,7 +422,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -456,7 +458,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc317eedc99037472ab1adb6f9038139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStatus: {fileID: 0}
+  _collider2D: {fileID: 1138543471}
+  playerStatus: {fileID: 354242}
+--- !u!50 &1138543473
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138543469}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1299905935
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,9 +491,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1299905936}
   - component: {fileID: 1299905937}
+  - component: {fileID: 1299905938}
   m_Layer: 3
-  m_Name: EnemyCollider
-  m_TagString: Untagged
+  m_Name: EnemySword
+  m_TagString: EnemySword
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -499,7 +524,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -522,6 +547,19 @@ PolygonCollider2D:
       - {x: 0.7849746, y: -0.506117}
       - {x: 1.0197935, y: -0.45609337}
       - {x: 1.1324472, y: -0.33592933}
+--- !u!114 &1299905938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299905935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e7c5c4c3a58d4df18ad17b18e594464, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _collider2D: {fileID: 1299905937}
 --- !u!1 &1344572910
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,10 +713,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04d2d3df9db7b4d9f9783736ce230a46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  searchPlayerRadius: 1
+  searchPlayerRadius: 2.5
   searchPlayerCenterTf: {fileID: 1344572911}
   animator: {fileID: 1633862908}
   hitAudio: {fileID: 1633862912}
+  sword: {fileID: 1299905938}
 --- !u!82 &1633862912
 AudioSource:
   m_ObjectHideFlags: 0
@@ -787,9 +826,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c962e1fbac4a9fba60a2d8af83aa4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  energy: 0
-  posture: 0
-  swordCollider: {fileID: 0}
+  energy: 3
+  posture: 3
+  swordCollider: {fileID: 1299905937}
 --- !u!1 &1719973449
 GameObject:
   m_ObjectHideFlags: 0

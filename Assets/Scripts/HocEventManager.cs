@@ -47,7 +47,7 @@ namespace HocInternal
         {
             if(HocConfig.Instance.enableDebugLog && HocConfig.Instance.enableEventSystemDebug)
             {
-                Debug.Log("Dispatcher with Id: " + dispathcerUuid + " triggered HocEvent: " + _name);
+                //Debug.Log("Dispatcher with Id: " + dispathcerUuid + " triggered HocEvent: " + _name);
             }
         }
     }
