@@ -5,32 +5,48 @@ using UnityEngine;
 
 public class HocStatus : MonoBehaviour
 {
-    public int energy;
-    public int posture;
-    private const int maxEnergy = 3;
-    private const int maxPosture = 3;
+    public int initialEnergy;
+    public int initialPosture;
+
+    private int energy;
+    private int posture;
 
     public PolygonCollider2D swordCollider;
+
+    public System.Action<int> OnPostureChange;
+    public System.Action<int> OnEnergyChange;
     
     void Start()
     {
-        energy = maxEnergy;
-        posture = maxPosture;
+        energy = initialEnergy;
+        posture = initialPosture;
+
+        OnEnergyChange?.Invoke(energy);
+        OnPostureChange?.Invoke(posture);
     }
 
-    public void setColliderStatus(bool isEnabled)
+    public void SetColliderStatus(bool isEnabled)
     {
         swordCollider.enabled = isEnabled;
     }
 
-    public void addEnergy(int delta)
+    public int GetEnergy()
     {
-        energy += delta;
+        return energy;
     }
 
-    public void addPosture(int delta)
+    public void AddEnergy(int delta)
+    {
+        energy += delta;
+
+        OnEnergyChange?.Invoke(energy);
+    }
+
+    public void AddPosture(int delta)
     {
         posture += delta;
+
+        OnPostureChange?.Invoke(posture);
     }
     
     void Update()

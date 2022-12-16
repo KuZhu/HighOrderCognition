@@ -9,6 +9,7 @@ public enum CanCacheInputType { A, D, MouseRight, None };
 public class Player : MonoBehaviour
 {
     [SerializeField] Animator animator;
+    [SerializeField] HocStatus status;
 
     [Header("Attack")]
     [SerializeField] float attackMoveDistance;
@@ -30,41 +31,57 @@ public class Player : MonoBehaviour
     bool firstInCache = false;
     bool firstDeal = false;
     private bool _dashing = false;
-    private Vector2 _targetPosition = Vector2.zero;
     private Coroutine _dashRoutine;
 
     bool attackValid = false;
 
-    void Start()
-    {
-        _targetPosition = transform.position;
-    }
     void Update()
     {
         // Handles Attack
         {
             if (HocInputManager.Instance.isHold("Attack"))
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+                if (status.GetEnergy() < 3)
                 {
-                    animator.SetBool("toAttackNormal", true);
+                    if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+                    {
+                        animator.SetBool("toAttackNormal", true);
 
-                    Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
-                    attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+                        Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
+                        attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+                    }
+                }
+                else
+                {
+                    if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+                    {
+                        animator.SetBool("toAttackPower", true);
+
+                        status.AddEnergy(-3);
+
+                        Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
+                        attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+                    }
                 }
             }
 
             if (!HocInputManager.Instance.isHold("Attack"))
             {
                 animator.SetBool("toAttackNormal", false);
+                animator.SetBool("toAttackPower", false);
 
-                if (!animator.GetCurrentAnimatorStateInfo(0).IsName("AttackNormal_ANI"))
+                if (attackMoveCoroutine != null)
                 {
-                    if (attackMoveCoroutine != null)
-                    {
-                        StopCoroutine(attackMoveCoroutine);
-                    }
+                    StopCoroutine(attackMoveCoroutine);
                 }
+
+                //if (!animator.GetCurrentAnimatorStateInfo(0).IsName("AttackNormal_ANI"))
+                //{
+                //    if (attackMoveCoroutine != null)
+                //    {
+                //        StopCoroutine(attackMoveCoroutine);
+                //    }
+                //}
             }
         }
 
@@ -174,8 +191,8 @@ public class Player : MonoBehaviour
     {
         if (_dashRoutine != null) StopCoroutine(_dashRoutine);
         animator.SetTrigger(triggerName);
-        _targetPosition += direction * new Vector2(rushMoveDistance, 0);
-        _dashRoutine = StartCoroutine(move(transform.position, _targetPosition, rushDuration));
+        Vector2 targetPosition = (Vector2)transform.position + direction * new Vector2(rushMoveDistance, 0);
+        _dashRoutine = StartCoroutine(move(transform.position, targetPosition, rushDuration));
     }
         
     void ToLeftDash(string triggerName)
@@ -204,7 +221,7 @@ public class Player : MonoBehaviour
         {
             transform.position = Vector2.Lerp(startPosition, targetPosition,t);
             t += Time.deltaTime / duration;
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
         _dashRoutine = null;
     }

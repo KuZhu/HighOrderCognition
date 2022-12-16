@@ -10,8 +10,6 @@ public class HocSword : MonoBehaviour
 
     private bool _isDefenseMode = false;
 
-    private int _maxPerfectBlockDetectionFrame = 10000;
-    //private int _defendModeFrameCounter = 0;
     public HocStatus playerStatus;
     // Start is called before the first frame update
     void Start()
@@ -25,8 +23,6 @@ public class HocSword : MonoBehaviour
         System.Action exitDefendMode = () =>
         {
             _isDefenseMode = false;
-            //_defendModeFrameCounter = 0;
-            //Debug.Log("Exit Defend Mode!");
         };
         
         HocEventManager.Instance.addHocEventListener("enterDefendMode", enterDefendMode);
@@ -39,8 +35,6 @@ public class HocSword : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (_isDefenseMode && _defendModeFrameCounter < _maxPerfectBlockDetectionFrame) _defendModeFrameCounter++;
-        //Debug.Log("Defend Mode Frame: " + _defendModeFrameCounter);
 
     }
 
@@ -63,17 +57,16 @@ public class HocSword : MonoBehaviour
             {
                 if (canPerfectBlock && enterPerfectBlockAni)
                 {
-                    Debug.Log("Perfect Block");
+                    playerStatus.AddEnergy(1);
                 }
                 else
                 {
-                    Debug.Log("Normal Block");
+                    playerStatus.AddPosture(-1);
                 }
-                // TODO: check frames counted by frame counter
             }
             else
             {
-                // TODO: Reduce Health ... etc
+                playerStatus.AddPosture(-2);
             }
         }
     }
