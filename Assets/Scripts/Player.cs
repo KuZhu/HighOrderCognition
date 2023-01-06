@@ -57,8 +57,6 @@ public class Player : MonoBehaviour
                     {
                         animator.SetBool("toAttackPower", true);
 
-                        status.AddEnergy(-3);
-
                         Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
                         attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
                     }
@@ -279,6 +277,18 @@ public class Player : MonoBehaviour
     {
         sword.AttackNormal_ExitAttack();
 
+        attackValid = false;
+    }
+
+    public void OnAttackPowerHit()
+    {
+        status.AddEnergy(-3);
+
+        attackValid = true;
+    }
+
+    public void OnAttackPowerEnd()
+    {
         attackValid = false;
     }
 

@@ -38,6 +38,7 @@ public class HocStatus : MonoBehaviour
     public void AddEnergy(int delta)
     {
         energy += delta;
+        energy = Mathf.Clamp(energy, 0, 3);
 
         OnEnergyChange?.Invoke(energy);
     }
@@ -45,6 +46,7 @@ public class HocStatus : MonoBehaviour
     public void AddPosture(int delta)
     {
         posture += delta;
+        posture = Mathf.Clamp(posture, 0, 3);
 
         OnPostureChange?.Invoke(posture);
     }
