@@ -6,15 +6,6 @@
             "id": "8f0605aa-61b7-41aa-ad62-c9ec22a0ec45",
             "actions": [
                 {
-                    "name": "Dash",
-                    "type": "Value",
-                    "id": "26ff4e62-65bc-4871-a422-d520817f5e13",
-                    "expectedControlType": "Double",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Attack",
                     "type": "Button",
                     "id": "890f4085-98f2-46b1-aa79-b85732e47ae7",
@@ -31,46 +22,22 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Rush",
+                    "type": "Value",
+                    "id": "5884094c-9b02-414d-9c7e-ae9d041558f1",
+                    "expectedControlType": "Double",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
-                    "name": "Horizontal",
-                    "id": "6f5464a5-cd9a-47a2-b23e-a32173f8f58d",
-                    "path": "1DAxis",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Dash",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "81dfbcf8-5510-40e1-adb2-b884a883e107",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "c233f375-d8a5-48ba-930f-ac730b99e082",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
                     "name": "",
                     "id": "1fe71bbf-47d7-4a19-85c0-bfb5287693f1",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Keyboard>/f",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -81,7 +48,130 @@
                 {
                     "name": "",
                     "id": "fa25b065-0da9-4596-8df1-126a0c42840e",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/g",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "50eff399-8b71-4c11-88c3-d359249d6c77",
+                    "path": "1DAxis",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rush",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "positive",
+                    "id": "b2d4fe8a-389e-4520-bef6-3bf2e77a511e",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Rush",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "negative",
+                    "id": "635958e2-a8ca-48ba-8b3e-20390ee5213a",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Rush",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "Enemy",
+            "id": "18db0947-12aa-45ee-b595-b53c92afd9e3",
+            "actions": [
+                {
+                    "name": "Rush",
+                    "type": "Value",
+                    "id": "8552b9b0-b146-4e3f-9a2d-bb9ae517a7f8",
+                    "expectedControlType": "Double",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "ea9eeb31-4752-4093-8e37-4783a9c1bfb6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Block",
+                    "type": "Button",
+                    "id": "d54d01a5-fb09-49c7-ace0-69cb2a8f4ee6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Horizontal",
+                    "id": "48e85845-0b0b-424b-8a97-1bf0d8bc669d",
+                    "path": "1DAxis",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rush",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "d7ec1577-3bba-4d03-8651-8fc64c6590e2",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Rush",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "158f6b5e-89b2-4b62-b039-7f9c19f3143e",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Rush",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "80c8818d-f364-4426-b842-59a02013e40a",
+                    "path": "<Keyboard>/comma",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f3a9e579-f3dd-412f-868f-35d4afcb10ab",
+                    "path": "<Keyboard>/period",
                     "interactions": "Hold",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

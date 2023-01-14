@@ -11,6 +11,10 @@ public class Player : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] HocStatus status;
 
+    [Header("Input")]
+    InputMaster inputMaster;
+    public bool isLeft;
+
     [Header("Attack")]
     [SerializeField] float attackMoveDistance;
     [SerializeField] float attackDuration;
@@ -24,6 +28,9 @@ public class Player : MonoBehaviour
     [Header("Sword")]
     [SerializeField] HocSword sword;
 
+    public System.Action OnEnterCanPerfectBlockAniArea;
+    public System.Action OnExitCanPerfectBlockAniArea;
+
     CanCacheInputType currentCache = CanCacheInputType.None;
 
     bool startCache = false;
@@ -35,78 +42,144 @@ public class Player : MonoBehaviour
 
     bool attackValid = false;
 
+    private void Awake()
+    {
+
+    }
+
+    private void Start()
+    {
+        inputMaster = new InputMaster();
+
+        if (isLeft)
+        {
+            inputMaster.Player.Enable();
+
+            inputMaster.Player.Attack.performed += Attack;
+            inputMaster.Player.Attack.canceled += AttackCancle;
+
+            inputMaster.Player.Block.performed += Block;
+            inputMaster.Player.Block.canceled += BlockCancle;
+
+            inputMaster.Player.Rush.Enable();
+            inputMaster.Player.Rush.performed += DashInput;
+        }
+        else
+        {
+            inputMaster.Enemy.Enable();
+
+            inputMaster.Enemy.Attack.performed += Attack;
+            inputMaster.Enemy.Attack.canceled += AttackCancle;
+
+            inputMaster.Enemy.Block.performed += Block;
+            inputMaster.Enemy.Block.canceled += BlockCancle;
+
+            inputMaster.Enemy.Rush.Enable();
+            inputMaster.Enemy.Rush.performed += DashInput;
+        }
+    }
+
+    void Attack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            if (status.GetEnergy() < 3)
+            {
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+                {
+                    animator.SetBool("toAttackNormal", true);
+
+                    Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
+                    attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+                }
+            }
+            else
+            {
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+                {
+                    animator.SetBool("toAttackPower", true);
+
+                    Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
+                    attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+                }
+            }
+
+            sword.state = SwordState.Attack;
+        }
+    }
+
+    void AttackCancle(InputAction.CallbackContext context)
+    {
+        animator.SetBool("toAttackNormal", false);
+        animator.SetBool("toAttackPower", false);
+
+        if (attackMoveCoroutine != null)
+        {
+            StopCoroutine(attackMoveCoroutine);
+        }
+
+        sword.state = SwordState.Normal;
+    }
+
+    void Block(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            ToDefend("toBlock");
+
+            sword.state = SwordState.Block;
+        }
+    }
+
+    void BlockCancle(InputAction.CallbackContext context)
+    {
+        animator.SetBool("toBlock", false);
+
+        sword.state = SwordState.Normal;
+    }
+
+    void DashInput(InputAction.CallbackContext context)
+    {
+        if(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+        { 
+            if (context.ReadValue<float>() < 0.0)
+            {
+                if (transform.localScale.x < 0)
+                {
+                    dash("toRushRight", -1);
+                }
+                else
+                {
+                    dash("toRushLeft", -1);
+                }
+            }
+            else if(context.ReadValue<float>() > 0.0)
+            {
+                if (transform.localScale.x < 0)
+                {
+                    dash("toRushLeft", 1);
+                }
+                else
+                {
+                    dash("toRushRight", 1);
+                }
+            }
+        }
+    }
+
     void Update()
     {
         // Handles Attack
         {
-            if (HocInputManager.Instance.isHold("Attack"))
-            {
-                if (status.GetEnergy() < 3)
-                {
-                    if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
-                    {
-                        animator.SetBool("toAttackNormal", true);
-
-                        Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
-                        attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
-                    }
-                }
-                else
-                {
-                    if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
-                    {
-                        animator.SetBool("toAttackPower", true);
-
-                        Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0);
-                        attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
-                    }
-                }
-            }
-
-            if (!HocInputManager.Instance.isHold("Attack"))
-            {
-                animator.SetBool("toAttackNormal", false);
-                animator.SetBool("toAttackPower", false);
-
-                if (attackMoveCoroutine != null)
-                {
-                    StopCoroutine(attackMoveCoroutine);
-                }
-
-                //if (!animator.GetCurrentAnimatorStateInfo(0).IsName("AttackNormal_ANI"))
-                //{
-                //    if (attackMoveCoroutine != null)
-                //    {
-                //        StopCoroutine(attackMoveCoroutine);
-                //    }
-                //}
-            }
+            
         }
 
         // Handles Rush / Dash
         {
-            //Debug.Log("Has Cached Input: " + HocInputManager.Instance.hasCachedInput);
-            if (HocInputManager.Instance.getValue<float>("Dash") < 0.0f &&
-                animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
-            {
-                dash("toRushLeft", -1);
-                // ToLeftDash("toRushLeft");
-            }
-            else if (HocInputManager.Instance.getValue<float>("Dash") > 0.0f &&
-                     animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
-            {
-                dash("toRushRight", 1);
-                //ToRightDash("toRushRight");
-            }
+            //Dash();
         }
 
         // Handles Block
-        if (HocInputManager.Instance.isHold("Block")) ToDefend("toBlock");
-        else
-        {
-            animator.SetBool("toBlock", false);
-            HocEventManager.Instance.dispatchHocEvent("exitDefendMode", 0);
-        }
 
         {
             // if (startDealAnimationEarlyEnd)
@@ -144,12 +217,12 @@ public class Player : MonoBehaviour
 
         }
     }
+
     void ToDefend(string transitionName)
     {
         if (transitionName == "toBlock")
         {
             animator.SetBool("toBlock", true);
-            HocEventManager.Instance.dispatchHocEvent("enterDefendMode", 0);
         }
         else
         {
@@ -159,30 +232,30 @@ public class Player : MonoBehaviour
 
     void enableCachedInput()
     {
-        Debug.Log("Released Cached Input: " + HocInputManager.Instance.hasCachedInput);
-        HocInputManager.Instance.releaseCachedInput();
-        HocInputManager.Instance.enableCachedInput();
+        //Debug.Log("Released Cached Input: " + HocInputManager.Instance.hasCachedInput);
+        //HocInputManager.Instance.releaseCachedInput();
+        //HocInputManager.Instance.enableCachedInput();
     }
 
     void processEarlyEndCache()
     {
-        if (HocInputManager.Instance.hasCachedInput)
-        {
-            string cachedName = HocInputManager.Instance.cachedInput.name;
-            switch (cachedName)
-            {
-                case "Block":
-                    ToDefend("forceBlock");
-                    break;
-                case "Dash":
-                    Debug.Log("Early processing Dash with _dashing = " + _dashing);
-                    if(HocInputManager.Instance.cachedValue < 0.0f) dash("toRushLeft", -1); //ToLeftDash("forceLeftDash");
-                    else dash("toRushRight", 1); //ToRightDash("forceRightDash");
-                    break;
-                default:
-                    break;
-            }
-        }
+        //if (HocInputManager.Instance.hasCachedInput)
+        //{
+        //    string cachedName = HocInputManager.Instance.cachedInput.name;
+        //    switch (cachedName)
+        //    {
+        //        case "Block":
+        //            ToDefend("forceBlock");
+        //            break;
+        //        case "Dash":
+        //            Debug.Log("Early processing Dash with _dashing = " + _dashing);
+        //            if(HocInputManager.Instance.cachedValue < 0.0f) dash("toRushLeft", -1); //ToLeftDash("forceLeftDash");
+        //            else dash("toRushRight", 1); //ToRightDash("forceRightDash");
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
     }
 
     void dash(string triggerName, float direction)
@@ -197,7 +270,7 @@ public class Player : MonoBehaviour
     {
         if (_dashing) return;
         animator.SetTrigger(triggerName);
-        Vector2 targetPosition = (Vector2)transform.position + new Vector2(-rushMoveDistance, 0);
+        Vector2 targetPosition = (Vector2)transform.position + new Vector2(-rushMoveDistance, 0) * transform.localScale.x;
         //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
     }
@@ -210,7 +283,6 @@ public class Player : MonoBehaviour
         //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
         StartCoroutine(move(transform.position, targetPosition, rushDuration));
     }
-
 
     IEnumerator move(Vector2 startPosition, Vector2 targetPosition,float duration)
     {
@@ -246,6 +318,7 @@ public class Player : MonoBehaviour
 
 
     }
+
     public void AttackAniEnd()
     {
         animator.SetBool("toAttackNormal", false);
@@ -268,14 +341,14 @@ public class Player : MonoBehaviour
 
     public void OnAttackNormalHit()
     {
-        sword.AttackNormal_EnterAttack();
+        sword.EnableSwordCollider();
 
         attackValid = true;
     }
 
     public void OnAttackNormalEnd()
     {
-        sword.AttackNormal_ExitAttack();
+        sword.DisableSwordCollider();
 
         attackValid = false;
     }
@@ -294,13 +367,31 @@ public class Player : MonoBehaviour
 
     public void OnEnterBlockPerfect()
     {
-        Debug.Log("Enter Perfect Block Ani");
-        sword.enterPerfectBlockAni = true;
+        //Debug.Log(name + " Enter Perfect Block Ani");
+
+        sword.EnableSwordCollider();
+
+        sword.enterPerfectBlockAni = true; 
     }
 
     public void OnExitBlockPerfect()
     {
-        Debug.Log("Exit Perfect Block Ani");
+        //Debug.Log(name + " Exit Perfect Block Ani");
         sword.enterPerfectBlockAni = false;
+    }
+
+    public void OnExitBlockAni()
+    {
+        sword.DisableSwordCollider();
+    }
+
+    public void _OnEnterCanPerfectBlockAniArea()
+    {
+        OnEnterCanPerfectBlockAniArea?.Invoke();
+    }
+
+    public void _OnExitCanPerfectBlockAniArea()
+    {
+        OnExitCanPerfectBlockAniArea?.Invoke();
     }
 }
