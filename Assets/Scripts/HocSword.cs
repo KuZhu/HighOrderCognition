@@ -4,19 +4,26 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum SwordState {Normal,Attack,Block,Attacked };
+public enum SwordState {Normal,Attack,Block,Attacked,PowerAttack };
 
 public class HocSword : MonoBehaviour
 {
     [SerializeField] Collider2D _collider2D;
     [SerializeField] string enemySordTag;
     [SerializeField] string enemyBodyTag;
-    [SerializeField] Player enemy;
+    public Player enemy;
 
     public SwordState state = SwordState.Normal;
 
     public HocStatus playerStatus;
     HocStatus enemyStatus;
+
+    bool isEnemySwordIn = false;
+    bool isEnemyBodyIn = false;
+    bool swordColliderEnabled = false;
+    bool isOutAttackPhase = false;
+
+    public static bool isInExecuteMode = false;
 
     // Start is called before the first frame update
     void Start()
@@ -32,33 +39,42 @@ public class HocSword : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    public bool enterPerfectBlockAni = false;
-    bool canPerfectBlock = false;
-    void PerfectBlockOn()
-    {
-        canPerfectBlock = true;
-    }
-    void PerfectBlockOff()
-    {
-        canPerfectBlock = false;
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag(enemySordTag))
+        if (!swordColliderEnabled)
         {
-            //if (enemy.isLeft)
-            //{
-            //    return;
-            //}
+            return;
+        }
+        else
+        {
+            if(state == SwordState.PowerAttack)
+            {
+                playerStatus.AddEnergy(-3);
+            }
+        }
 
-            SwordState enemySwordState = enemy.GetComponentInChildren<HocSword>().state;
+        if (isInExecuteMode)
+        {
+            return;
+        }
 
-            Debug.Log(state);
-            Debug.Log(enemySwordState);
+        bool enemySwordColliderEnabled = enemy.GetComponentInChildren<HocSword>().swordColliderEnabled;
+        SwordState enemySwordState = enemy.GetComponentInChildren<HocSword>().state;
+
+        if (isEnemySwordIn && swordColliderEnabled)
+        {
+            if(state == SwordState.PowerAttack)
+            {
+                if(enemySwordState == SwordState.Attack ||
+                   enemySwordState == SwordState.PowerAttack)
+                {
+                    enemyStatus.AddPosture(-3);
+
+                    state = SwordState.Attacked;
+                }
+            }
+        }
+
+        if (isEnemySwordIn && enemySwordColliderEnabled)
+        {
             switch (state)
             {
                 case SwordState.Block:
@@ -76,30 +92,57 @@ public class HocSword : MonoBehaviour
 
                         enemy.GetComponentInChildren<HocSword>().state = SwordState.Attacked;
                     }
-                break;
-                case SwordState.Normal:
-                    if(enemySwordState == SwordState.Attack)
+                    if (enemySwordState == SwordState.PowerAttack)
                     {
                         playerStatus.AddPosture(-2);
 
                         enemy.GetComponentInChildren<HocSword>().state = SwordState.Attacked;
                     }
-                break;
+                    break;
+                case SwordState.Normal:
+                    if (enemySwordState == SwordState.Attack)
+                    {
+                        playerStatus.AddPosture(-2);
+
+                        enemy.GetComponentInChildren<HocSword>().state = SwordState.Attacked;
+                    }
+                    break;
                 case SwordState.Attack:
-                    if(enemySwordState == SwordState.Attack)
+                    if (enemySwordState == SwordState.Attack)
                     {
                         playerStatus.AddPosture(-2);
                         enemyStatus.AddPosture(-2);
 
                         state = SwordState.Attacked;
+                        enemy.GetComponentInChildren<HocSword>().state = SwordState.Attacked;
                     }
-                break;
+                    
+                    if(enemySwordState == SwordState.Normal)
+                    {
+                        enemyStatus.AddPosture(-2);
+                        state = SwordState.Attacked;
+                    }
+                    break;
+                case SwordState.PowerAttack:
+                    if (enemySwordState != SwordState.Attack &&
+                       enemySwordState != SwordState.PowerAttack)
+                    { 
+                        enemyStatus.AddPosture(-2);
+
+                        state = SwordState.Attacked;
+                    }
+                    break;
             }
         }
-        else if (other.CompareTag(enemyBodyTag))
+        else if (isEnemyBodyIn && !enemySwordColliderEnabled)
         {
-            bool enemySwordColliderEnabled = enemy.GetComponentInChildren<HocSword>()._collider2D.enabled;
-            if (state == SwordState.Attack && !enemySwordColliderEnabled)
+            if (state == SwordState.Attack)
+            {
+                enemyStatus.AddPosture(-2);
+
+                state = SwordState.Attacked;
+            }
+            if (state == SwordState.PowerAttack)
             {
                 enemyStatus.AddPosture(-2);
 
@@ -108,13 +151,65 @@ public class HocSword : MonoBehaviour
         }
     }
 
+    public bool enterPerfectBlockAni = false;
+    bool canPerfectBlock = false;
+    void PerfectBlockOn()
+    {
+        canPerfectBlock = true;
+    }
+    void PerfectBlockOff()
+    {
+        canPerfectBlock = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag(enemySordTag))
+        {
+            isEnemySwordIn = true;
+        }
+        if (other.CompareTag(enemyBodyTag))
+        {
+            isEnemyBodyIn = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag(enemySordTag))
+        {
+            isEnemySwordIn = false;
+        }
+        if (other.CompareTag(enemyBodyTag))
+        {
+            isEnemyBodyIn = false;
+        }
+    }
+
+    void SwordVSSword()
+    {
+        isInExecuteMode = true;
+
+        //Player.startVSTime = Time.time;
+    }
+
     public void EnableSwordCollider()
     {
-        _collider2D.enabled = true;
+        swordColliderEnabled = true;
     }
 
     public void DisableSwordCollider()
     {
-        _collider2D.enabled = false;
+        swordColliderEnabled = false;
+    }
+
+    public void SwordAttackStart()
+    {
+        isOutAttackPhase = false;
+    }
+
+    public void SwordAttackOutPhase()
+    {
+        isOutAttackPhase = true;
     }
 }

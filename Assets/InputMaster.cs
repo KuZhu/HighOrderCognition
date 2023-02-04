@@ -53,6 +53,15 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""VSSword"",
+                    ""type"": ""Button"",
+                    ""id"": ""a7fa13d4-5c33-4aaf-915b-064319afaa61"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -110,6 +119,17 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""action"": ""Rush"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""359aea9f-9e10-4a28-ba25-f2a93a866fb4"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""VSSword"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -139,6 +159,15 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""name"": ""Block"",
                     ""type"": ""Button"",
                     ""id"": ""d54d01a5-fb09-49c7-ace0-69cb2a8f4ee6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""VSSword"",
+                    ""type"": ""Button"",
+                    ""id"": ""3f94574e-0c3c-48b2-a6ca-b2c2a1eb48dc"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -198,6 +227,17 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Block"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f9621674-49c6-4462-af82-41bb1bda51f3"",
+                    ""path"": ""<Keyboard>/comma"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""VSSword"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -788,11 +828,13 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_Rush = m_Player.FindAction("Rush", throwIfNotFound: true);
+        m_Player_VSSword = m_Player.FindAction("VSSword", throwIfNotFound: true);
         // Enemy
         m_Enemy = asset.FindActionMap("Enemy", throwIfNotFound: true);
         m_Enemy_Rush = m_Enemy.FindAction("Rush", throwIfNotFound: true);
         m_Enemy_Attack = m_Enemy.FindAction("Attack", throwIfNotFound: true);
         m_Enemy_Block = m_Enemy.FindAction("Block", throwIfNotFound: true);
+        m_Enemy_VSSword = m_Enemy.FindAction("VSSword", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -867,6 +909,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_Rush;
+    private readonly InputAction m_Player_VSSword;
     public struct PlayerActions
     {
         private @InputMaster m_Wrapper;
@@ -874,6 +917,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Block => m_Wrapper.m_Player_Block;
         public InputAction @Rush => m_Wrapper.m_Player_Rush;
+        public InputAction @VSSword => m_Wrapper.m_Player_VSSword;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -892,6 +936,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Rush.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRush;
                 @Rush.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRush;
                 @Rush.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRush;
+                @VSSword.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVSSword;
+                @VSSword.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVSSword;
+                @VSSword.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVSSword;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -905,6 +952,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Rush.started += instance.OnRush;
                 @Rush.performed += instance.OnRush;
                 @Rush.canceled += instance.OnRush;
+                @VSSword.started += instance.OnVSSword;
+                @VSSword.performed += instance.OnVSSword;
+                @VSSword.canceled += instance.OnVSSword;
             }
         }
     }
@@ -916,6 +966,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     private readonly InputAction m_Enemy_Rush;
     private readonly InputAction m_Enemy_Attack;
     private readonly InputAction m_Enemy_Block;
+    private readonly InputAction m_Enemy_VSSword;
     public struct EnemyActions
     {
         private @InputMaster m_Wrapper;
@@ -923,6 +974,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         public InputAction @Rush => m_Wrapper.m_Enemy_Rush;
         public InputAction @Attack => m_Wrapper.m_Enemy_Attack;
         public InputAction @Block => m_Wrapper.m_Enemy_Block;
+        public InputAction @VSSword => m_Wrapper.m_Enemy_VSSword;
         public InputActionMap Get() { return m_Wrapper.m_Enemy; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -941,6 +993,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Block.started -= m_Wrapper.m_EnemyActionsCallbackInterface.OnBlock;
                 @Block.performed -= m_Wrapper.m_EnemyActionsCallbackInterface.OnBlock;
                 @Block.canceled -= m_Wrapper.m_EnemyActionsCallbackInterface.OnBlock;
+                @VSSword.started -= m_Wrapper.m_EnemyActionsCallbackInterface.OnVSSword;
+                @VSSword.performed -= m_Wrapper.m_EnemyActionsCallbackInterface.OnVSSword;
+                @VSSword.canceled -= m_Wrapper.m_EnemyActionsCallbackInterface.OnVSSword;
             }
             m_Wrapper.m_EnemyActionsCallbackInterface = instance;
             if (instance != null)
@@ -954,6 +1009,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Block.started += instance.OnBlock;
                 @Block.performed += instance.OnBlock;
                 @Block.canceled += instance.OnBlock;
+                @VSSword.started += instance.OnVSSword;
+                @VSSword.performed += instance.OnVSSword;
+                @VSSword.canceled += instance.OnVSSword;
             }
         }
     }
@@ -1113,12 +1171,14 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
         void OnRush(InputAction.CallbackContext context);
+        void OnVSSword(InputAction.CallbackContext context);
     }
     public interface IEnemyActions
     {
         void OnRush(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
+        void OnVSSword(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

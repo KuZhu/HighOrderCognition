@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "VSSword",
+                    "type": "Button",
+                    "id": "a7fa13d4-5c33-4aaf-915b-064319afaa61",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -88,6 +97,17 @@
                     "action": "Rush",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "359aea9f-9e10-4a28-ba25-f2a93a866fb4",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "VSSword",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -117,6 +137,15 @@
                     "name": "Block",
                     "type": "Button",
                     "id": "d54d01a5-fb09-49c7-ace0-69cb2a8f4ee6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "VSSword",
+                    "type": "Button",
+                    "id": "3f94574e-0c3c-48b2-a6ca-b2c2a1eb48dc",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -176,6 +205,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f9621674-49c6-4462-af82-41bb1bda51f3",
+                    "path": "<Keyboard>/comma",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "VSSword",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

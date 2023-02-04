@@ -132,6 +132,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   sword: {fileID: 7659529329719846934}
+  vsDuration: 0
 --- !u!61 &7659529328693773479
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -145,7 +146,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.21369982, y: -0.2452538}
+  m_Offset: {x: -0.21382987, y: -0.2452538}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -156,7 +157,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.4008144, y: 1.2042022}
+  m_Size: {x: 0.51605535, y: 1.2042022}
   m_EdgeRadius: 0
 --- !u!114 &7659529328693773476
 MonoBehaviour:
@@ -214,7 +215,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7659529329719846923}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
@@ -232,15 +233,16 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.8735486, y: -0.11814201}
-      - {x: 0.4017073, y: 0.029281199}
-      - {x: 0.34658635, y: 0.053599358}
-      - {x: -0.12409717, y: -0.48300037}
-      - {x: 0.43717843, y: -0.52948153}
-      - {x: 0.8445122, y: -0.4917168}
-      - {x: 1.0155306, y: -0.4545986}
-      - {x: 1.1207075, y: -0.3692733}
-      - {x: 1.1024715, y: -0.28499585}
+    - - {x: 0.86206806, y: -0.11377865}
+      - {x: 0.4625727, y: 0.005589962}
+      - {x: 0.3762244, y: 0.010510266}
+      - {x: -0.03624803, y: -0.4969077}
+      - {x: 0.29825026, y: -0.5214641}
+      - {x: 0.6038966, y: -0.5421162}
+      - {x: 0.8560796, y: -0.50367546}
+      - {x: 1.0654761, y: -0.42924702}
+      - {x: 1.1187345, y: -0.35779864}
+      - {x: 1.0849345, y: -0.27107847}
 --- !u!114 &7659529329719846934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +259,7 @@ MonoBehaviour:
   enemySordTag: 
   enemyBodyTag: 
   enemy: {fileID: 0}
+  state: 0
   playerStatus: {fileID: 7659529328693773476}
   enterPerfectBlockAni: 0
 --- !u!50 &7659529329719846935

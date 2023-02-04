@@ -28,6 +28,13 @@ public class Player : MonoBehaviour
     [Header("Sword")]
     [SerializeField] HocSword sword;
 
+    //[Space]
+    //[Header("VS Sword")]
+    //[SerializeField] float vsDuration;
+
+    //public static float startVSTime;
+    //int vsCount;
+
     public System.Action OnEnterCanPerfectBlockAniArea;
     public System.Action OnExitCanPerfectBlockAniArea;
 
@@ -41,11 +48,6 @@ public class Player : MonoBehaviour
     private Coroutine _dashRoutine;
 
     bool attackValid = false;
-
-    private void Awake()
-    {
-
-    }
 
     private void Start()
     {
@@ -63,6 +65,10 @@ public class Player : MonoBehaviour
 
             inputMaster.Player.Rush.Enable();
             inputMaster.Player.Rush.performed += DashInput;
+
+            //inputMaster.Player.VSSword.Enable();
+            //inputMaster.Player.VSSword.performed += VSSword;
+
         }
         else
         {
@@ -76,6 +82,9 @@ public class Player : MonoBehaviour
 
             inputMaster.Enemy.Rush.Enable();
             inputMaster.Enemy.Rush.performed += DashInput;
+
+            //inputMaster.Enemy.VSSword.Enable();
+            //inputMaster.Enemy.VSSword.performed += VSSword;
         }
     }
 
@@ -91,6 +100,8 @@ public class Player : MonoBehaviour
 
                     Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
                     attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+
+                    sword.state = SwordState.Attack;
                 }
             }
             else
@@ -101,10 +112,10 @@ public class Player : MonoBehaviour
 
                     Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
                     attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
+
+                    sword.state = SwordState.PowerAttack;
                 }
             }
-
-            sword.state = SwordState.Attack;
         }
     }
 
@@ -117,8 +128,6 @@ public class Player : MonoBehaviour
         {
             StopCoroutine(attackMoveCoroutine);
         }
-
-        sword.state = SwordState.Normal;
     }
 
     void Block(InputAction.CallbackContext context)
@@ -167,19 +176,54 @@ public class Player : MonoBehaviour
         }
     }
 
+    void VSSword(InputAction.CallbackContext context)
+    {
+        //if (context.performed)
+        //{
+        //    if (HocSword.isInExecuteMode)
+        //    {
+        //        if (Time.time < startVSTime + vsDuration)
+        //        {
+        //            vsCount++;
+        //            Debug.Log(vsCount);
+        //        }
+        //    }
+        //}
+    }
+
     void Update()
     {
-        // Handles Attack
-        {
-            
-        }
+        //if(HocSword.isInExecuteMode)
+        //{
+        //    if (Time.time >= startVSTime + vsDuration)
+        //    {
+        //        animator.speed = 1;
+        //        sword.enemy.GetComponent<Animator>().speed = 1;
 
-        // Handles Rush / Dash
-        {
-            //Dash();
-        }
+        //        HocSword.isInExecuteMode = false;
 
-        // Handles Block
+        //        if (vsCount > sword.enemy.vsCount)
+        //        {
+        //            sword.enemy.GetComponent<HocStatus>().AddPosture(-3);
+        //            sword.enemy.GetComponentInChildren<HocSword>().state = SwordState.Normal;
+        //        }
+        //        else if (vsCount < sword.enemy.vsCount)
+        //        {
+        //            sword.state = SwordState.Normal;
+        //            GetComponent<HocStatus>().AddPosture(-3);
+        //        }
+        //        else
+        //        {
+        //            GetComponent<HocStatus>().AddPosture(-2);
+        //            sword.enemy.GetComponent<HocStatus>().AddPosture(-2);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //Debug.Log(Time.time - (startVSTime + vsDuration));
+        //        animator.speed = 0;
+        //    }
+        //}
 
         {
             // if (startDealAnimationEarlyEnd)
@@ -351,18 +395,24 @@ public class Player : MonoBehaviour
         sword.DisableSwordCollider();
 
         attackValid = false;
+
+        sword.SwordAttackOutPhase();
     }
 
     public void OnAttackPowerHit()
     {
-        status.AddEnergy(-3);
+        sword.EnableSwordCollider();
 
         attackValid = true;
     }
 
     public void OnAttackPowerEnd()
     {
+        sword.DisableSwordCollider();
+
         attackValid = false;
+
+        sword.SwordAttackOutPhase();
     }
 
     public void OnEnterBlockPerfect()
@@ -393,5 +443,15 @@ public class Player : MonoBehaviour
     public void _OnExitCanPerfectBlockAniArea()
     {
         OnExitCanPerfectBlockAniArea?.Invoke();
+    }
+
+    public void OnAttackAniEnd()
+    {
+        sword.state = SwordState.Normal;
+    }
+
+    public void OnAttackStart()
+    {
+        sword.SwordAttackStart();
     }
 }
