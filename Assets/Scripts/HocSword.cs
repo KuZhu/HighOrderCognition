@@ -36,7 +36,6 @@ public class HocSword : MonoBehaviour
         state = SwordState.Normal;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!swordColliderEnabled)

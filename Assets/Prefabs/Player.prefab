@@ -91,7 +91,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!95 &7659529328693773529
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -108,7 +108,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!114 &7659529328693773478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,7 +132,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   sword: {fileID: 7659529329719846934}
-  vsDuration: 0
 --- !u!61 &7659529328693773479
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -236,7 +235,11 @@ PolygonCollider2D:
     - - {x: 0.86206806, y: -0.11377865}
       - {x: 0.4625727, y: 0.005589962}
       - {x: 0.3762244, y: 0.010510266}
-      - {x: -0.03624803, y: -0.4969077}
+      - {x: 0.32554054, y: -0.21176803}
+      - {x: 0.26871657, y: -0.35968578}
+      - {x: 0.16291285, y: -0.45459414}
+      - {x: -0.4665733, y: -0.42071903}
+      - {x: -0.014668465, y: -0.5028202}
       - {x: 0.29825026, y: -0.5214641}
       - {x: 0.6038966, y: -0.5421162}
       - {x: 0.8560796, y: -0.50367546}
