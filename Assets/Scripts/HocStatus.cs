@@ -50,9 +50,4 @@ public class HocStatus : MonoBehaviour
 
         OnPostureChange?.Invoke(posture);
     }
-    
-    void Update()
-    {
-        
-    }
 }

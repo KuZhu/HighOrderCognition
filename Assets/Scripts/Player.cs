@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public enum CanCacheInputType { A, D, MouseRight, None };
+public enum CanCacheInputType { DashRight, DashLeft, Attack };
 
 public class Player : MonoBehaviour
 {
@@ -20,38 +21,29 @@ public class Player : MonoBehaviour
     [SerializeField] float attackDuration;
 
     [Header("Rush")]
-    [SerializeField] float rushMoveDistance = 2;
-    [SerializeField] float rushDuration;
-    [SerializeField] LayerMask colliderLayer;
-    Coroutine attackMoveCoroutine = null;
+    [SerializeField] float dashMoveDistance = 2;
+    [SerializeField] float dashDuration;
+
+    [Header("Move")]
+    [SerializeField] string enemyTag;
+    [SerializeField] float gapDistance;
 
     [Header("Sword")]
     [SerializeField] HocSword sword;
 
-    //[Space]
-    //[Header("VS Sword")]
-    //[SerializeField] float vsDuration;
-
-    //public static float startVSTime;
-    //int vsCount;
-
     public System.Action OnEnterCanPerfectBlockAniArea;
     public System.Action OnExitCanPerfectBlockAniArea;
 
-    CanCacheInputType currentCache = CanCacheInputType.None;
+    CanCacheInputType currentCache;
 
     bool startCache = false;
-    bool startDealAnimationEarlyEnd = false;
-    bool firstInCache = false;
-    bool firstDeal = false;
-    private bool _dashing = false;
-    private Coroutine _dashRoutine;
-
-    bool attackValid = false;
+    bool cached = false;
 
     private void Start()
     {
         inputMaster = new InputMaster();
+
+        status.OnPostureChange += OnTakeDamage;
 
         if (isLeft)
         {
@@ -65,10 +57,6 @@ public class Player : MonoBehaviour
 
             inputMaster.Player.Rush.Enable();
             inputMaster.Player.Rush.performed += DashInput;
-
-            //inputMaster.Player.VSSword.Enable();
-            //inputMaster.Player.VSSword.performed += VSSword;
-
         }
         else
         {
@@ -82,52 +70,90 @@ public class Player : MonoBehaviour
 
             inputMaster.Enemy.Rush.Enable();
             inputMaster.Enemy.Rush.performed += DashInput;
-
-            //inputMaster.Enemy.VSSword.Enable();
-            //inputMaster.Enemy.VSSword.performed += VSSword;
         }
+    }
+
+    void OnTakeDamage(int currentPosture)
+    {
+        animator.SetTrigger("toTakeDamage");
     }
 
     void Attack(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            if (status.GetEnergy() < 3)
+            if (startCache)
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+                if (!cached)
                 {
-                    animator.SetBool("toAttackNormal", true);
-
-                    Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
-                    attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
-
-                    sword.state = SwordState.Attack;
+                    cached = true;
+                    currentCache = CanCacheInputType.Attack;
                 }
             }
-            else
+
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
-                {
-                    animator.SetBool("toAttackPower", true);
-
-                    Vector2 targetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
-                    attackMoveCoroutine = StartCoroutine(move(transform.position, targetPosition, attackDuration));
-
-                    sword.state = SwordState.PowerAttack;
-                }
+                _Attack(false);
             }
+        }
+    }
+
+    void _Attack(bool isForce)
+    {
+        if (status.GetEnergy() < 3)
+        {
+            if (isForce)
+            {
+                animator.SetTrigger("forceAttackNormal");  
+            }
+            animator.SetBool("toAttackNormal", true);
+
+            moving = true;
+            moveT = 0;
+            moveDuration = attackDuration;
+            moveStartPosition = (Vector2)transform.position;
+            moveTargetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
+            moveDirection = moveTargetPosition - moveStartPosition;
+
+            sword.state = SwordState.Attack;
+        }
+        else
+        {
+            if (isForce)
+            {
+                animator.SetTrigger("forceAttackPower");
+            }
+            animator.SetBool("toAttackPower", true);
+
+            moving = true;
+            moveT = 0;
+            moveDuration = attackDuration;
+            moveStartPosition = (Vector2)transform.position;
+            moveTargetPosition = (Vector2)transform.position + new Vector2(attackMoveDistance, 0) * transform.localScale.x;
+            moveDirection = moveTargetPosition - moveStartPosition;
+
+            sword.state = SwordState.PowerAttack;
         }
     }
 
     void AttackCancle(InputAction.CallbackContext context)
     {
+        Debug.Log("a");
+        if (startCache)
+        {
+            if (cached)
+            {
+                if (currentCache == CanCacheInputType.Attack)
+                {
+                    cached = false;
+                }
+            }
+        }
+
         animator.SetBool("toAttackNormal", false);
         animator.SetBool("toAttackPower", false);
 
-        if (attackMoveCoroutine != null)
-        {
-            StopCoroutine(attackMoveCoroutine);
-        }
+        moving = false;
     }
 
     void Block(InputAction.CallbackContext context)
@@ -149,116 +175,143 @@ public class Player : MonoBehaviour
 
     void DashInput(InputAction.CallbackContext context)
     {
-        if(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
-        { 
-            if (context.ReadValue<float>() < 0.0)
+        if (startCache)
+        {
+            if (!cached)
             {
-                if (transform.localScale.x < 0)
+                cached = true;
+
+                if (context.ReadValue<float>() < 0.0)
                 {
-                    dash("toRushRight", -1);
+                    if (transform.localScale.x < 0)
+                    {
+                        currentCache = CanCacheInputType.DashRight;
+                    }
+                    else
+                    {
+                        currentCache = CanCacheInputType.DashLeft;
+                    }
                 }
-                else
+                else if(context.ReadValue<float>() > 0.0)
                 {
-                    dash("toRushLeft", -1);
+                    if (transform.localScale.x < 0)
+                    {
+                        currentCache = CanCacheInputType.DashLeft;
+                    }
+                    else
+                    {
+                        currentCache = CanCacheInputType.DashRight;
+                    }
                 }
             }
-            else if(context.ReadValue<float>() > 0.0)
+        }
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_ANI"))
+        {
+            _Dash(context.ReadValue<float>(), false);
+        }
+    }
+
+    void _Dash(float direction, bool isForce)
+    {
+        if (direction < 0.0)
+        {
+            if (transform.localScale.x < 0)
             {
-                if (transform.localScale.x < 0)
+                if (isForce)
                 {
-                    dash("toRushLeft", 1);
+                    Dash("forceDashRight", -1);
                 }
                 else
                 {
-                    dash("toRushRight", 1);
+                    Dash("toDashRight", -1);
+                }
+            }
+            else
+            {
+                if (isForce)
+                {
+                    Dash("forceDashLeft", -1);
+                }
+                else
+                {
+                    Dash("toDashLeft", -1);
+                }
+            }
+        }
+        else if (direction > 0.0)
+        {
+            if (transform.localScale.x < 0)
+            {
+                if (isForce)
+                {
+                    Dash("forceDashLeft", 1);
+                }
+                else
+                {
+                    Dash("toDashLeft", 1);
+                }
+            }
+            else
+            {
+                if (isForce)
+                {
+                    Dash("forceDashRight", 1);
+                }
+                else
+                {
+                    Dash("toDashRight", 1);
                 }
             }
         }
     }
 
-    void VSSword(InputAction.CallbackContext context)
+    bool moving = false;
+    Vector2 moveStartPosition;
+    Vector2 moveTargetPosition;
+    float moveT = 0;
+    float moveDuration;
+    Vector2 moveDirection;
+
+    Vector2 GetActureTargetposition(Vector2 currentPosition, Vector2 targetPosition)
     {
-        //if (context.performed)
-        //{
-        //    if (HocSword.isInExecuteMode)
-        //    {
-        //        if (Time.time < startVSTime + vsDuration)
-        //        {
-        //            vsCount++;
-        //            Debug.Log(vsCount);
-        //        }
-        //    }
-        //}
+        float remainDistance = Vector2.Distance(transform.position, moveTargetPosition);
+
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, moveDirection, remainDistance);
+
+        float distanceToTarget = remainDistance;
+        foreach (var hit in hits)
+        {
+            if (hit.collider.gameObject.tag == enemyTag)
+            {
+                distanceToTarget = hit.distance - gapDistance;
+            }
+        }
+
+        if (distanceToTarget < remainDistance)
+        {
+            return currentPosition + new Vector2(distanceToTarget, 0) * transform.localScale.x;
+        }
+        else
+        {
+            return targetPosition;
+        }
     }
 
     void Update()
     {
-        //if(HocSword.isInExecuteMode)
-        //{
-        //    if (Time.time >= startVSTime + vsDuration)
-        //    {
-        //        animator.speed = 1;
-        //        sword.enemy.GetComponent<Animator>().speed = 1;
-
-        //        HocSword.isInExecuteMode = false;
-
-        //        if (vsCount > sword.enemy.vsCount)
-        //        {
-        //            sword.enemy.GetComponent<HocStatus>().AddPosture(-3);
-        //            sword.enemy.GetComponentInChildren<HocSword>().state = SwordState.Normal;
-        //        }
-        //        else if (vsCount < sword.enemy.vsCount)
-        //        {
-        //            sword.state = SwordState.Normal;
-        //            GetComponent<HocStatus>().AddPosture(-3);
-        //        }
-        //        else
-        //        {
-        //            GetComponent<HocStatus>().AddPosture(-2);
-        //            sword.enemy.GetComponent<HocStatus>().AddPosture(-2);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //Debug.Log(Time.time - (startVSTime + vsDuration));
-        //        animator.speed = 0;
-        //    }
-        //}
-
+        if (moving) 
         {
-            // if (startDealAnimationEarlyEnd)
-            // {
-            //     if (!firstDeal)
-            //     {
-            //         firstDeal = true;
-            //         Debug.Log("Deal early animation end");
-            //     }
+            moveTargetPosition = GetActureTargetposition(transform.position, moveTargetPosition);
 
-            //     switch (currentCache)
-            //     {
-            //         case CanCacheInputType.D:
-            //             ToRightDash("forceRightDash");
-            //             startDealAnimationEarlyEnd = false;
-            //             break;
-            //         case CanCacheInputType.MouseRight:
-            //             ToDefend("forceBlock");
-            //             startDealAnimationEarlyEnd = false;
-            //             break;
-            //         case CanCacheInputType.A:
-            //             ToLeftDash("forceLeftDash");
-            //             startDealAnimationEarlyEnd = false;
-            //             break;
-            //         case CanCacheInputType.None:
-            //             break;
-            //     }
+            transform.position = Vector2.Lerp(moveStartPosition, moveTargetPosition, moveT);
+            moveT += Time.deltaTime / moveDuration;
 
-            //     currentCache = CanCacheInputType.None;
-            // }
-        }
-
-        if (attackValid)
-        {
-
+            if (moveT >= 1)
+            {
+                moveT = 0;
+                moving = false; ;
+            }
         }
     }
 
@@ -274,103 +327,16 @@ public class Player : MonoBehaviour
         }
     }
 
-    void enableCachedInput()
+    void Dash(string triggerName, float direction)
     {
-        //Debug.Log("Released Cached Input: " + HocInputManager.Instance.hasCachedInput);
-        //HocInputManager.Instance.releaseCachedInput();
-        //HocInputManager.Instance.enableCachedInput();
-    }
-
-    void processEarlyEndCache()
-    {
-        //if (HocInputManager.Instance.hasCachedInput)
-        //{
-        //    string cachedName = HocInputManager.Instance.cachedInput.name;
-        //    switch (cachedName)
-        //    {
-        //        case "Block":
-        //            ToDefend("forceBlock");
-        //            break;
-        //        case "Dash":
-        //            Debug.Log("Early processing Dash with _dashing = " + _dashing);
-        //            if(HocInputManager.Instance.cachedValue < 0.0f) dash("toRushLeft", -1); //ToLeftDash("forceLeftDash");
-        //            else dash("toRushRight", 1); //ToRightDash("forceRightDash");
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
-    }
-
-    void dash(string triggerName, float direction)
-    {
-        if (_dashRoutine != null) StopCoroutine(_dashRoutine);
         animator.SetTrigger(triggerName);
-        Vector2 targetPosition = (Vector2)transform.position + direction * new Vector2(rushMoveDistance, 0);
-        _dashRoutine = StartCoroutine(move(transform.position, targetPosition, rushDuration));
-    }
-        
-    void ToLeftDash(string triggerName)
-    {
-        if (_dashing) return;
-        animator.SetTrigger(triggerName);
-        Vector2 targetPosition = (Vector2)transform.position + new Vector2(-rushMoveDistance, 0) * transform.localScale.x;
-        //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
-        StartCoroutine(move(transform.position, targetPosition, rushDuration));
-    }
 
-    void ToRightDash(string triggerName)
-    {
-        if (_dashing) return;
-        animator.SetTrigger(triggerName);
-        Vector2 targetPosition = (Vector2)transform.position + new Vector2(rushMoveDistance, 0);
-        //targetPosition = GetActureTargetposition((Vector2)transform.position, targetPosition);
-        StartCoroutine(move(transform.position, targetPosition, rushDuration));
-    }
-
-    IEnumerator move(Vector2 startPosition, Vector2 targetPosition,float duration)
-    {
-        float t = 0;
-        while (t <= 1)
-        {
-            transform.position = Vector2.Lerp(startPosition, targetPosition,t);
-            t += Time.deltaTime / duration;
-            yield return null;
-        }
-        _dashRoutine = null;
-    }
-
-    Vector2 GetActureTargetposition(Vector2 startPosition, Vector2 targetPosition)
-    {
-        Vector2 direction = targetPosition - startPosition;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, rushMoveDistance, colliderLayer);
-        float distance = Vector2.Distance(targetPosition, startPosition);
-
-
-        if (hit.collider != null)
-            {
-                distance = Vector2.Distance(hit.transform.position, startPosition);
-           }
-      if(distance < rushMoveDistance)
-       {
-            return startPosition + new Vector2(distance, 0);
-        }
-        else
-       {
-           return startPosition - new Vector2(distance,0);
-       }
-
-
-    }
-
-    public void AttackAniEnd()
-    {
-        animator.SetBool("toAttackNormal", false);
-
-        startDealAnimationEarlyEnd = false;
-        startCache = false;
-        firstInCache = false;
-        firstDeal = false;
+        moving = true;
+        moveT = 0;
+        moveDuration = dashDuration;
+        moveStartPosition = (Vector2)transform.position;
+        moveTargetPosition = (Vector2)transform.position + direction * new Vector2(dashMoveDistance, 0);
+        moveDirection = moveTargetPosition - moveStartPosition;
     }
 
     public void StartCache()
@@ -380,21 +346,52 @@ public class Player : MonoBehaviour
 
     public void DealEarlyEnd()
     {
-        startDealAnimationEarlyEnd = true;
+        startCache = false;
+
+        if (cached)
+        {
+            cached = false;
+
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("DashRight_ANI") ||
+                animator.GetCurrentAnimatorStateInfo(0).IsName("DashLeft_ANI"))
+            {
+                if (currentCache == CanCacheInputType.Attack)
+                {
+                    _Attack(true);
+
+                    return;
+                }
+            }
+
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("AttackNormal_ANI") ||
+                animator.GetCurrentAnimatorStateInfo(0).IsName("AttackPower_ANI"))
+            {
+                if (currentCache == CanCacheInputType.DashRight)
+                {
+                    OnAttackAniEnd();
+                    _Dash(1, true);
+
+                    return;
+                }
+                if (currentCache == CanCacheInputType.DashLeft)
+                {
+                    OnAttackAniEnd();
+                    _Dash(-1, true);
+
+                    return;
+                }
+            }
+        }
     }
 
     public void OnAttackNormalHit()
     {
         sword.EnableSwordCollider();
-
-        attackValid = true;
     }
 
     public void OnAttackNormalEnd()
     {
         sword.DisableSwordCollider();
-
-        attackValid = false;
 
         sword.SwordAttackOutPhase();
     }
@@ -402,15 +399,11 @@ public class Player : MonoBehaviour
     public void OnAttackPowerHit()
     {
         sword.EnableSwordCollider();
-
-        attackValid = true;
     }
 
     public void OnAttackPowerEnd()
     {
         sword.DisableSwordCollider();
-
-        attackValid = false;
 
         sword.SwordAttackOutPhase();
     }
