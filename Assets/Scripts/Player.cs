@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public enum CanCacheInputType { DashRight, DashLeft, Attack };
+public enum CanCacheInputType { DashRight, DashLeft, Attack, Block };
 
 public class Player : MonoBehaviour
 {
@@ -138,7 +138,6 @@ public class Player : MonoBehaviour
 
     void AttackCancle(InputAction.CallbackContext context)
     {
-        Debug.Log("a");
         if (startCache)
         {
             if (cached)
@@ -160,14 +159,44 @@ public class Player : MonoBehaviour
     {
         if (context.performed)
         {
-            ToDefend("toBlock");
+            if (startCache)
+            {
+                if (!cached)
+                {
+                    cached = true;
+                    currentCache = CanCacheInputType.Block;
+                }
+            }
 
-            sword.state = SwordState.Block;
+            _Block(false);
         }
+    }
+
+    void _Block(bool isForce)
+    {
+        if (isForce)
+        {
+            animator.SetTrigger("forceBlock");
+        }
+
+        ToDefend("toBlock");
+
+        sword.state = SwordState.Block;
     }
 
     void BlockCancle(InputAction.CallbackContext context)
     {
+        if (startCache)
+        {
+            if (cached)
+            {
+                if (currentCache == CanCacheInputType.Block)
+                {
+                    cached = false;
+                }
+            }
+        }
+
         animator.SetBool("toBlock", false);
 
         sword.state = SwordState.Normal;
@@ -361,6 +390,27 @@ public class Player : MonoBehaviour
 
                     return;
                 }
+
+                if(currentCache == CanCacheInputType.Block)
+                {
+                    _Block(true);
+
+                    return;
+                }
+
+                if (currentCache == CanCacheInputType.DashRight)
+                {
+                    _Dash(1, true);
+
+                    return;
+                }
+
+                if (currentCache == CanCacheInputType.DashLeft)
+                {
+                    _Dash(-1, true);
+
+                    return;
+                }
             }
 
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("AttackNormal_ANI") ||
@@ -373,10 +423,19 @@ public class Player : MonoBehaviour
 
                     return;
                 }
+
                 if (currentCache == CanCacheInputType.DashLeft)
                 {
                     OnAttackAniEnd();
                     _Dash(-1, true);
+
+                    return;
+                }
+
+                if (currentCache == CanCacheInputType.Block)
+                {
+                    OnAttackAniEnd();
+                    _Block(true);
 
                     return;
                 }
