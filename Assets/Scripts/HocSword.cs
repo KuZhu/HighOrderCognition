@@ -9,6 +9,9 @@ public enum SwordState {Normal,Attack,Block,Attacked,PowerAttack };
 public class HocSword : MonoBehaviour
 {
     [SerializeField] Collider2D _collider2D;
+    [SerializeField] Animator gainEnergy;
+    [SerializeField] Animator guard;
+    [SerializeField] Animator full_energy;
     [SerializeField] string enemySordTag;
     [SerializeField] string enemyBodyTag;
     public Player enemy;
@@ -82,11 +85,20 @@ public class HocSword : MonoBehaviour
                         Debug.Log(name + " Block, when " + enemy.name + " attack");
                         if (canPerfectBlock && enterPerfectBlockAni)
                         {
-                            playerStatus.AddEnergy(1);
+                            playerStatus.AddEnergy(1);                     
+                            if (playerStatus.GetEnergy() > 2)
+                            {
+                                full_energy.SetTrigger("full_energy");                           
+                            }
+                            else
+                            {
+                                gainEnergy.SetTrigger("gainEnergy");
+                            }
                         }
                         else
                         {
                             playerStatus.AddPosture(-1);
+                            guard.SetTrigger("guard");
                         }
 
                         enemy.GetComponentInChildren<HocSword>().state = SwordState.Attacked;

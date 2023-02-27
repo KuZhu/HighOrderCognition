@@ -10,6 +10,7 @@ public enum CanCacheInputType { DashRight, DashLeft, Attack, Block };
 public class Player : MonoBehaviour
 {
     [SerializeField] Animator animator;
+    [SerializeField] Animator bleed;
     [SerializeField] HocStatus status;
 
     [Header("Input")]
@@ -76,6 +77,7 @@ public class Player : MonoBehaviour
     void OnTakeDamage(int currentPosture)
     {
         animator.SetTrigger("toTakeDamage");
+        bleed.SetTrigger("bleed");
     }
 
     void Attack(InputAction.CallbackContext context)
@@ -98,6 +100,7 @@ public class Player : MonoBehaviour
         }
     }
 
+
     void _Attack(bool isForce)
     {
         if (status.GetEnergy() < 3)
@@ -106,7 +109,7 @@ public class Player : MonoBehaviour
             {
                 animator.SetTrigger("forceAttackNormal");  
             }
-            animator.SetBool("toAttackNormal", true);
+            animator.SetBool("toAttackNormal", true);          
 
             moving = true;
             moveT = 0;
