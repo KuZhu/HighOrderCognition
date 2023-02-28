@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class HocStatus : MonoBehaviour
 {
-    [SerializeField] Animator posture_UI;
+    [SerializeField] Animator postureTransition_UI;
+
     public int initialEnergy;
     public int initialPosture;
 
@@ -14,7 +15,7 @@ public class HocStatus : MonoBehaviour
 
     public PolygonCollider2D swordCollider;
 
-    public System.Action<int> OnPostureChange;
+    public System.Action<int,int> OnPostureChange;
     public System.Action<int> OnEnergyChange;
     
     void Start()
@@ -23,7 +24,7 @@ public class HocStatus : MonoBehaviour
         posture = initialPosture;
 
         OnEnergyChange?.Invoke(energy);
-        OnPostureChange?.Invoke(posture);
+        OnPostureChange?.Invoke(posture,0);
     }
     
     public void SetColliderStatus(bool isEnabled)
@@ -49,11 +50,17 @@ public class HocStatus : MonoBehaviour
         posture += delta;
         posture = Mathf.Clamp(posture, 0, 3);
 
-        OnPostureChange?.Invoke(posture);
+        OnPostureChange?.Invoke(posture,delta);
     }
+
+    public int GetPosture()
+    {
+        return posture;
+    }
+
     public void Update()
     {
-        posture_UI.SetInteger("posture", posture);
+        postureTransition_UI.SetInteger("posture", posture);
     }
 
 }

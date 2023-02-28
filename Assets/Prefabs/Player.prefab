@@ -96,7 +96,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &8471092629501206818
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -113,7 +113,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7659529328693773530
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,7 +209,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!95 &7659529328693773529
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -226,7 +226,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &7659529328693773478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,6 +245,8 @@ MonoBehaviour:
   isLeft: 0
   attackMoveDistance: 1
   attackDuration: 0.1
+  backDistance: 0.5
+  backDuration: 0.1
   dashMoveDistance: 2
   dashDuration: 0
   enemyTag: 
@@ -288,6 +290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c962e1fbac4a9fba60a2d8af83aa4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  postureTransition_UI: {fileID: 0}
   initialEnergy: 0
   initialPosture: 3
   swordCollider: {fileID: 7659529329719846921}
@@ -379,6 +382,7 @@ MonoBehaviour:
   _collider2D: {fileID: 7659529329719846921}
   gainEnergy: {fileID: 0}
   guard: {fileID: 0}
+  full_energy: {fileID: 0}
   enemySordTag: 
   enemyBodyTag: 
   enemy: {fileID: 0}

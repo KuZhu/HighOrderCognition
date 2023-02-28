@@ -21,6 +21,10 @@ public class Player : MonoBehaviour
     [SerializeField] float attackMoveDistance;
     [SerializeField] float attackDuration;
 
+    [Header("Take Damage")]
+    [SerializeField] float backDistance;
+    [SerializeField] float backDuration;
+
     [Header("Rush")]
     [SerializeField] float dashMoveDistance = 2;
     [SerializeField] float dashDuration;
@@ -74,10 +78,22 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnTakeDamage(int currentPosture)
+    void OnTakeDamage(int currentPosture,int delta)
     {
-        animator.SetTrigger("toTakeDamage");
-        bleed.SetTrigger("bleed");
+        if (Mathf.Abs(delta) > 1)
+        {
+            animator.SetTrigger("toTakeDamage");
+            bleed.SetTrigger("bleed");
+        }
+        else
+        {
+            moving = true;
+            moveT = 0;
+            moveDuration = backDuration;
+            moveStartPosition = (Vector2)transform.position;
+            moveTargetPosition = (Vector2)transform.position + new Vector2(-backDistance, 0) * transform.localScale.x;
+            moveDirection = moveTargetPosition - moveStartPosition;
+        }
     }
 
     void Attack(InputAction.CallbackContext context)
@@ -215,25 +231,11 @@ public class Player : MonoBehaviour
 
                 if (context.ReadValue<float>() < 0.0)
                 {
-                    if (transform.localScale.x < 0)
-                    {
-                        currentCache = CanCacheInputType.DashRight;
-                    }
-                    else
-                    {
-                        currentCache = CanCacheInputType.DashLeft;
-                    }
+                    currentCache = CanCacheInputType.DashLeft;
                 }
                 else if(context.ReadValue<float>() > 0.0)
                 {
-                    if (transform.localScale.x < 0)
-                    {
-                        currentCache = CanCacheInputType.DashLeft;
-                    }
-                    else
-                    {
-                        currentCache = CanCacheInputType.DashRight;
-                    }
+                    currentCache = CanCacheInputType.DashRight;
                 }
             }
         }
@@ -248,51 +250,51 @@ public class Player : MonoBehaviour
     {
         if (direction < 0.0)
         {
-            if (transform.localScale.x < 0)
+            if (isLeft)
             {
                 if (isForce)
                 {
-                    Dash("forceDashRight", -1);
+                    Dash("forceDashLeft",-1);
                 }
                 else
                 {
-                    Dash("toDashRight", -1);
+                    Dash("toDashLeft",-1);
                 }
             }
             else
             {
                 if (isForce)
                 {
-                    Dash("forceDashLeft", -1);
+                    Dash("forceDashRight",1);
                 }
                 else
                 {
-                    Dash("toDashLeft", -1);
+                    Dash("toDashRight",1);
                 }
             }
         }
         else if (direction > 0.0)
         {
-            if (transform.localScale.x < 0)
+            if (isLeft)
             {
                 if (isForce)
                 {
-                    Dash("forceDashLeft", 1);
+                    Dash("forceDashRight",1);
                 }
                 else
                 {
-                    Dash("toDashLeft", 1);
+                    Dash("toDashRight",1);
                 }
             }
             else
             {
                 if (isForce)
                 {
-                    Dash("forceDashRight", 1);
+                    Dash("forceDashLeft",-1);
                 }
                 else
                 {
-                    Dash("toDashRight", 1);
+                    Dash("toDashLeft",-1);
                 }
             }
         }
@@ -359,7 +361,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Dash(string triggerName, float direction)
+    void Dash(string triggerName, int direction)
     {
         animator.SetTrigger(triggerName);
 
@@ -367,7 +369,7 @@ public class Player : MonoBehaviour
         moveT = 0;
         moveDuration = dashDuration;
         moveStartPosition = (Vector2)transform.position;
-        moveTargetPosition = (Vector2)transform.position + direction * new Vector2(dashMoveDistance, 0);
+        moveTargetPosition = (Vector2)transform.position + direction * transform.localScale.x * new Vector2(dashMoveDistance, 0);
         moveDirection = moveTargetPosition - moveStartPosition;
     }
 
@@ -509,6 +511,9 @@ public class Player : MonoBehaviour
     public void OnAttackAniEnd()
     {
         sword.state = SwordState.Normal;
+
+        animator.SetBool("toAttackNormal", false);
+        animator.SetBool("toAttackPower", false);
     }
 
     public void OnAttackStart()

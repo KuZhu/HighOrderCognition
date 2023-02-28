@@ -85,7 +85,8 @@ public class HocSword : MonoBehaviour
                         Debug.Log(name + " Block, when " + enemy.name + " attack");
                         if (canPerfectBlock && enterPerfectBlockAni)
                         {
-                            playerStatus.AddEnergy(1);                     
+                            playerStatus.AddEnergy(1);
+                            
                             if (playerStatus.GetEnergy() > 2)
                             {
                                 full_energy.SetTrigger("full_energy");                           

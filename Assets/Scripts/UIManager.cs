@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviour
         playerStatus.OnEnergyChange += UpdateEnergy;
     }
 
-    void UpdatePosture(int amount)
+    void UpdatePosture(int amount,int delta)
     {
         ClearChildObj(postureUITf);
 
