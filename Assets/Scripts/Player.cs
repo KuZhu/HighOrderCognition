@@ -442,6 +442,12 @@ public class Player : MonoBehaviour
 
                     return;
                 }
+                if (currentCache == CanCacheInputType.Attack)
+                {
+                    OnAttackAniEnd();
+                    _Attack(true);
+                    return;
+                }
             }
         }
     }

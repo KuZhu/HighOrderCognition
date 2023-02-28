@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class HocStatus : MonoBehaviour
 {
+    [SerializeField] Animator posture_UI;
     public int initialEnergy;
     public int initialPosture;
 
@@ -24,7 +25,7 @@ public class HocStatus : MonoBehaviour
         OnEnergyChange?.Invoke(energy);
         OnPostureChange?.Invoke(posture);
     }
-
+    
     public void SetColliderStatus(bool isEnabled)
     {
         swordCollider.enabled = isEnabled;
@@ -34,7 +35,7 @@ public class HocStatus : MonoBehaviour
     {
         return energy;
     }
-
+ 
     public void AddEnergy(int delta)
     {
         energy += delta;
@@ -50,4 +51,9 @@ public class HocStatus : MonoBehaviour
 
         OnPostureChange?.Invoke(posture);
     }
+    public void Update()
+    {
+        posture_UI.SetInteger("posture", posture);
+    }
+
 }
