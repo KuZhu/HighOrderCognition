@@ -124,6 +124,7 @@ public class HocSword : MonoBehaviour
                             playerStatus.AddPosture(-2);
                         }
 
+                        enemyStatus.AddEnergy(-3);
                         enemy.GetComponentInChildren<HocSword>().state = SwordState.Attacked;
                     }
                     break;

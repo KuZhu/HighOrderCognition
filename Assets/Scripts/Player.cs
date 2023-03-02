@@ -50,6 +50,8 @@ public class Player : MonoBehaviour
 
         status.OnPostureChange += OnTakeDamage;
 
+        HocStatus.OnGameOver += OnGameOver;
+
         if (isLeft)
         {
             inputMaster.Player.Enable();
@@ -76,6 +78,38 @@ public class Player : MonoBehaviour
             inputMaster.Enemy.Rush.Enable();
             inputMaster.Enemy.Rush.performed += DashInput;
         }
+    }
+
+    void OnGameOver()
+    {
+        if (isLeft)
+        {
+            inputMaster.Player.Attack.performed -= Attack;
+            inputMaster.Player.Attack.canceled -= AttackCancle;
+
+            inputMaster.Player.Block.performed -= Block;
+            inputMaster.Player.Block.canceled -= BlockCancle;
+
+            inputMaster.Player.Rush.performed -= DashInput;
+            inputMaster.Player.Rush.Disable();
+
+            inputMaster.Player.Disable();
+        }
+        else
+        {
+            inputMaster.Enemy.Attack.performed -= Attack;
+            inputMaster.Enemy.Attack.canceled -= AttackCancle;
+
+            inputMaster.Enemy.Block.performed -= Block;
+            inputMaster.Enemy.Block.canceled -= BlockCancle;
+
+            inputMaster.Enemy.Rush.performed -= DashInput;
+            inputMaster.Enemy.Rush.Disable();
+
+            inputMaster.Enemy.Disable();
+        }
+
+        Destroy(gameObject);
     }
 
     void OnTakeDamage(int currentPosture,int delta)

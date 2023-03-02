@@ -287,7 +287,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!95 &337386363
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -304,7 +304,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!95 &495262652 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1871845080347658425, guid: 0e0e8be058c284450b3bffb9a0439439, type: 3}
@@ -369,7 +369,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!95 &504630142
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -386,7 +386,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,7 +581,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &1104183406
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -598,7 +598,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!212 &1104183407
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -820,7 +820,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7659529328693773530, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_Name
-      value: Player (1)
+      value: RightPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 7659529328693773530, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_TagString
@@ -833,6 +833,10 @@ PrefabInstance:
     - target: {fileID: 7659529329719846921, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7659529329719846923, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
+      propertyPath: m_Name
+      value: RightPlayerSword
       objectReference: {fileID: 0}
     - target: {fileID: 7659529329719846923, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_TagString
@@ -1770,7 +1774,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!95 &2055309991
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1787,7 +1791,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2065147644 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2339240141131011267, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
@@ -1795,7 +1799,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &2065147646
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1812,7 +1816,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!212 &2065147647
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2152,7 +2156,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7659529328693773530, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_Name
-      value: Player
+      value: LeftPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 7659529328693773530, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_TagString
@@ -2173,6 +2177,10 @@ PrefabInstance:
     - target: {fileID: 7659529329719846921, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7659529329719846923, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
+      propertyPath: m_Name
+      value: LeftPlayerSword
       objectReference: {fileID: 0}
     - target: {fileID: 7659529329719846923, guid: ec35c731ce42947d6ad4f75735084e41, type: 3}
       propertyPath: m_TagString
@@ -2291,7 +2299,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!95 &7659529328694125417
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2308,4 +2316,4 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0

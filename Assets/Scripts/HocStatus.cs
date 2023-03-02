@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using HocInternal;
@@ -18,6 +19,7 @@ public class HocStatus : MonoBehaviour
 
     public System.Action<int,int> OnPostureChange;
     public System.Action<int> OnEnergyChange;
+    public static Action OnGameOver;
     
     void Start()
     {
@@ -62,9 +64,11 @@ public class HocStatus : MonoBehaviour
     public void Update()
     {
         postureTransition_UI.SetInteger("posture", posture);
-        //if (GetPosture() <= 0)
+        if (posture <= 0)
         {
-            //SceneManager.LoadScene("Start");
+            OnGameOver?.Invoke();
+
+            SceneManager.LoadScene("Start");
         }
     }
 
