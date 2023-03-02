@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using HocInternal;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HocStatus : MonoBehaviour
 {
@@ -61,6 +62,10 @@ public class HocStatus : MonoBehaviour
     public void Update()
     {
         postureTransition_UI.SetInteger("posture", posture);
+        //if (GetPosture() <= 0)
+        {
+            //SceneManager.LoadScene("Start");
+        }
     }
 
 }

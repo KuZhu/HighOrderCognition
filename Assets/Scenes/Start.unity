@@ -915,7 +915,7 @@ SpriteRenderer:
   m_Size: {x: 19.2, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &1218100989
@@ -1686,7 +1686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ButtonLook: {fileID: 1280966140}
-  GuideImage: {fileID: 0}
+  GuideImage: {fileID: 2036474092}
 --- !u!1 &2036474092
 GameObject:
   m_ObjectHideFlags: 0

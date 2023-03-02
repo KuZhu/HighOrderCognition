@@ -106,7 +106,23 @@ public class HocSword : MonoBehaviour
                     }
                     if (enemySwordState == SwordState.PowerAttack)
                     {
-                        playerStatus.AddPosture(-2);
+                        if (canPerfectBlock && enterPerfectBlockAni)
+                        {
+                            playerStatus.AddEnergy(1);
+
+                            if (playerStatus.GetEnergy() > 2)
+                            {
+                                full_energy.SetTrigger("full_energy");
+                            }
+                            else
+                            {
+                                gainEnergy.SetTrigger("gainEnergy");
+                            }
+                        }
+                        else
+                        {
+                            playerStatus.AddPosture(-2);
+                        }
 
                         enemy.GetComponentInChildren<HocSword>().state = SwordState.Attacked;
                     }
@@ -137,7 +153,8 @@ public class HocSword : MonoBehaviour
                     break;
                 case SwordState.PowerAttack:
                     if (enemySwordState != SwordState.Attack &&
-                       enemySwordState != SwordState.PowerAttack)
+                       enemySwordState != SwordState.PowerAttack &&
+                       enemySwordState != SwordState.Block)
                     { 
                         enemyStatus.AddPosture(-2);
 
