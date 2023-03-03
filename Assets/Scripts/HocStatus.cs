@@ -66,9 +66,17 @@ public class HocStatus : MonoBehaviour
         postureTransition_UI.SetInteger("posture", posture);
         if (posture <= 0)
         {
+            if (GetComponent<Player>().isLeft)
+            {
+                EndButtons.isLeftDead = true;
+            }
+            else
+            {
+                EndButtons.isLeftDead = false;
+            }
             OnGameOver?.Invoke();
 
-            SceneManager.LoadScene("Start");
+            SceneManager.LoadScene("Ending");
         }
     }
 

@@ -108,6 +108,7 @@ public class Player : MonoBehaviour
 
             inputMaster.Enemy.Disable();
         }
+        HocStatus.OnGameOver -= OnGameOver;
 
         Destroy(gameObject);
     }
