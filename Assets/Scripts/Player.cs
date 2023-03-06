@@ -115,17 +115,17 @@ public class Player : MonoBehaviour
 
     void OnTakeDamage(int currentPosture,int delta)
     {
-        if (Mathf.Abs(delta) > 1)
+        if (delta <= -2)
         {
             animator.SetTrigger("toTakeDamage");
             bleed.SetTrigger("bleed");
         }
-        else
+        else if(delta < 0)
         {
             moving = true;
             moveT = 0;
             moveDuration = backDuration;
-            moveStartPosition = (Vector2)transform.position;
+            moveStartPosition = transform.position;
             moveTargetPosition = (Vector2)transform.position + new Vector2(-backDistance, 0) * transform.localScale.x;
             moveDirection = moveTargetPosition - moveStartPosition;
         }

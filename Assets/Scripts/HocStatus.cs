@@ -64,6 +64,7 @@ public class HocStatus : MonoBehaviour
     public void Update()
     {
         postureTransition_UI.SetInteger("posture", posture);
+
         if (posture <= 0)
         {
             if (GetComponent<Player>().isLeft)

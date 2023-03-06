@@ -39,14 +39,31 @@ public class HocSword : MonoBehaviour
         state = SwordState.Normal;
     }
 
+    float? startNoneBattleModeTime = null;
+
     void Update()
     {
         if (!swordColliderEnabled)
         {
+            if(startNoneBattleModeTime == null)
+            {
+                startNoneBattleModeTime = Time.time;
+            }
+            else
+            {
+                if(Time.time >= startNoneBattleModeTime + 5)
+                {
+                    playerStatus.AddPosture(1);
+
+                    startNoneBattleModeTime = null;
+                }
+            }
             return;
         }
         else
         {
+            startNoneBattleModeTime = null;
+
             if(state == SwordState.PowerAttack)
             {
                 playerStatus.AddEnergy(-3);
